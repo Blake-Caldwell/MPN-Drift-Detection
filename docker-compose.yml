@@ -1,0 +1,18 @@
+version: "2.20.2"
+
+services:
+
+  backend:
+    build: ./backend
+    restart: on-failure
+    ports:
+      - "8000:8000"
+
+
+  frontend:
+    build: ./frontend
+    restart: always
+    depends_on: 
+      - backend
+    ports:
+      - "3000:3000"
