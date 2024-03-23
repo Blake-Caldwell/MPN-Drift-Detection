@@ -1,18 +1,17 @@
-
+'use client';
 import React, { useState, useEffect } from 'react';
 import api from '../app/api'
 
-interface Data {
-  message: string;
-}
+
 
 function Test_Fast() {
-  const [data, setData] = useState<Data | null>(null);
+  const [data, setData] = useState<string | null>(null);
 
-  
+    useEffect(() => { 
     const fetchData = async () => {
       try {
-        const response = await api.get<Data>('http://localhost:8000/test'); // Update with your FastAPI URL
+        const response = await api.get<string>('http://localhost:8000/test');
+        console.log(response.data);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error); 
@@ -20,16 +19,22 @@ function Test_Fast() {
     };
 
     fetchData();
- 
+  }, []);
 
   return (
     <div>
       {data 
-        ? <h1>{data.message}</h1> 
-        : <p>Loading data...</p>
+        ? <h1>{data}</h1> 
+        : <h1>Loading data...</h1>
       }
     </div>
   );
+
+  // return (
+  //   <div>
+  //     <pre>{JSON.stringify(data, null, 2)}</pre> 
+  //   </div>
+  // );
 }
 
 export default Test_Fast;
