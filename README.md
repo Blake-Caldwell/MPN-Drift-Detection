@@ -39,7 +39,7 @@ This project consists of a FastAPI backend and a Next.js frontend. Docker and Do
 
    ```bash
    cd frontend/app
-   npm run dev
+   npm run dev # or yarn
    ```
 
    - Then navigate to http://localhost:3000 to view the nextjs front end.
