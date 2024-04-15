@@ -3,6 +3,7 @@ import { useState, useRef, ChangeEvent, DragEvent } from "react";
 
 export const FileUpload = () => {
   const [fileEnter, setFileEnter] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -14,14 +15,20 @@ export const FileUpload = () => {
     setFileEnter(false);
   };
 
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => { // wont let duplicate files
     e.preventDefault();
     setFileEnter(false);
 
     if (e.dataTransfer.files) {
-      [...e.dataTransfer.files].forEach((file, i) => {
+      [...e.dataTransfer.files].forEach((file, i) => { // to be removed, good for testing
         console.log(`File ${i + 1}: ${file.name}`);
       });
+
+      const newFiles = e.dataTransfer.files;
+      const tempFiles: File[] = Array.from(newFiles).filter( // this syntax is wild
+        (file) => !selectedFiles.some((selectedFile) => selectedFile.name === file.name)
+      );
+      setSelectedFiles((prevFiles) => [...prevFiles, ...tempFiles]);
     }
   };
 
@@ -29,29 +36,33 @@ export const FileUpload = () => {
     fileInputRef.current?.click();
   }
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => { // for file browser
     if (e.target.files) {
       [...e.target.files].forEach((file, i) => {
         console.log(`File ${i + 1}: ${file.name}`);
       });
+
+      const newFiles = e.target.files;
+      const tempFiles: File[] = Array.from(newFiles).filter( // this syntax is wild
+        (file) => !selectedFiles.some((selectedFile) => selectedFile.name === file.name)
+      );
+      setSelectedFiles((prevFiles) => [...prevFiles, ...tempFiles]);
     }
   };
 
   return (
-    <div className="box-container mx-auto bg-slate-50 p-6 rounded-lg shadow-lg"> 
+    <div className="box-container mx-auto bg-slate-50 p-6 rounded-lg shadow-2xl">
       <div
-        className={`border-2 border-dashed ${
-          fileEnter ? "border-blue-500" : "border-slate-300"
-        } p-4 rounded-lg flex flex-col items-center justify-center h-48 cursor-pointer transition duration-300 ease-in-out`}
+        className={`border-2 border-dashed ${fileEnter ? "border-blue-500" : "border-slate-300"
+          } p-4 rounded-lg flex flex-col items-center justify-center h-48 cursor-pointer transition duration-300 ease-in-out`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleClick}
       >
         <svg
-          className={`w-8 h-8 mb-2 ${
-            fileEnter ? "text-blue-500" : "text-slate-400"
-          }`}
+          className={`w-8 h-8 mb-2 ${fileEnter ? "text-blue-500" : "text-slate-400"
+            }`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -65,9 +76,8 @@ export const FileUpload = () => {
           ></path>
         </svg>
         <p
-          className={`text-center ${
-            fileEnter ? "text-blue-500" : "text-slate-400"
-          }`}
+          className={`text-center ${fileEnter ? "text-blue-500" : "text-slate-400"
+            }`}
         >
           {fileEnter
             ? "Release to drop the files here"
@@ -81,6 +91,11 @@ export const FileUpload = () => {
         multiple
         style={{ display: "none" }}
       />
+
+      {selectedFiles.length > 0 && (
+        <div>
+        </div>
+      )}
     </div>
   );
 };
