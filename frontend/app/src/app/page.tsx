@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Test_Fast from '@/components/test';
 import { FileUpload } from '@/components/upload';
-
-
-// const Home = () => {
-//     const testFetch = async() => {
-
-//     }
-// } 
+ 
 
 export default function Home() {
   return (

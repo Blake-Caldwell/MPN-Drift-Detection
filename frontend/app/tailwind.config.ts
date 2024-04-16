@@ -12,6 +12,10 @@ const config: Config = {
         'global-gradient': 'bg-gradient-to-br from-slate-500 to-slate-800', 
         'other-gradient': 'gradient'
       },
+
+      customColours: {
+        
+      }
     },
   },
   plugins: [],
