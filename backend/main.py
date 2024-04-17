@@ -31,8 +31,16 @@ def test():
 
 
 # file uploading
-# this in the future should be session driven. i.e files are stored to a session id. future problem however
+# this in the future should be session driven. i.e files are stored to a session id.
+# also a config file should be used to only allow certain file types
 @app.post("/upload_files")
 async def upload_files(files: list[UploadFile]):
+
     for file in files:
         data = await file.read()
+        save_loc = UPLOAD_DIR / file.filename
+        with open(save_loc, "w") as saved_f:
+            saved_f.write(data)
+
+    # Logic to start processing data gets launched from here?
+    return {"filenames": [saved_f for f in files]}

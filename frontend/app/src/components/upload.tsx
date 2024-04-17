@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef, ChangeEvent, DragEvent } from "react";
+import apiModule from '../utils/api'
 
 export const FileUpload = () => {
   const [fileEnter, setFileEnter] = useState(false);
@@ -38,9 +39,6 @@ export const FileUpload = () => {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => { // for file browser
     if (e.target.files) {
-      // [...e.target.files].forEach((file, i) => {
-      //   console.log(`File ${i + 1}: ${file.name}`);
-      // });
 
       const newFiles = e.target.files;
       const tempFiles: File[] = Array.from(newFiles).filter( // this syntax is wild
@@ -58,17 +56,19 @@ export const FileUpload = () => {
     setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   }
 
-  const handleSubmitClick = () => {
+  const handleSubmitClick = async () => {
     console.log("Submit!")
     //submitting to the backend logic goes here!
     // gonna have to implement it in src/utils/api.tsx first, then hook up here.
-  }
 
-  // const logFiles = () => {
-  //   [...selectedFiles].forEach((file, i) => {
-  //     console.log(`File ${i + 1}: ${file.name}`);
-  //   })
-  // }
+    try {
+      const result = await apiModule.uploadFiles(selectedFiles);
+      console.log(result);
+      // page direction should be here towards the dashboard or a loading screen
+    } catch(error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div>
