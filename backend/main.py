@@ -38,8 +38,8 @@ async def upload_files(files: list[UploadFile]):
 
     for file in files:
         data = await file.read()
-        save_loc = UPLOAD_DIR / file.filename
-        with open(save_loc, "w") as saved_f:
+        save_loc = UPLOAD_DIR + "/" + file.filename
+        with open(save_loc, "wb") as saved_f:
             saved_f.write(data)
 
     # Logic to start processing data gets launched from here?
