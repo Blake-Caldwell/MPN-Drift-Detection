@@ -73,9 +73,11 @@ export const FileUpload = () => {
       {
         console.error(error);
         setShowError([error.name, error.message]);
-        setIsLoading(false);
+        
       }
     }
+    setIsLoading(false); //remove spinner
+    setSelectedFiles([]); //empty after upload
   }
 
   return (
