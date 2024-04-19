@@ -12,10 +12,6 @@ export default function Home() {
           Idoba Drift Detector
         </h1>
         <FileUpload></FileUpload>
-        <div className='pt-20'> 
-          <Test_Fast></Test_Fast>
-        </div>
-
       </div>
     </div>
 

@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import api from '../utils/api'
+import apiModule from '../utils/api'
 
 
 
@@ -10,7 +10,7 @@ function Test_Fast() {
     useEffect(() => { 
     const fetchData = async () => {
       try {
-        const response = await api.get<string>('http://localhost:8000/test');
+        const response = await apiModule.api.get<string>('http://localhost:8000/test');
         console.log(response.data);
         setData(response.data);
       } catch (error) {

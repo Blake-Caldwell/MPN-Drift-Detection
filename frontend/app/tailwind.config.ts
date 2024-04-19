@@ -15,6 +15,10 @@ const config: Config = {
 
       customColours: {
         
+      },
+
+      zIndex: {
+        50: '50',
       }
     },
   },
