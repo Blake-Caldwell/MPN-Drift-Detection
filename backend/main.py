@@ -33,6 +33,11 @@ async def index():
     return {"details": "--Drift Detector Backend--"}
 
 
+@app.get("/health")  # required for github action docker build
+async def health_check():
+    return {"status": "OK"}
+
+
 @app.get("/test")
 def test():
     return "Hello from FastAPI"
