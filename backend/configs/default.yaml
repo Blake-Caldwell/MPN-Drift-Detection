@@ -1,0 +1,13 @@
+# ESSENTIAL VARS
+DEV: true
+
+UPLOAD_DIR: "uploads"
+
+ALLOWED_ORIGINS:
+  - "http://localhost:3000"
+  - "https://localhost:3000"
+
+HOST: "0.0.0.0"
+PORT: 8000
+# NON-ESSENTIAL VARS
+

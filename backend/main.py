@@ -1,19 +1,27 @@
+import sys
+import os
+
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.config import Config
+
+if len(sys.argv) > 1:
+    config_file = sys.argv[1]
+else:
+    config_file = "configs/default.yaml"  # this makes having this essential. Maybe we dont want this but I think it's fine
+
+backend_config = Config(config_file)
+
 # 'consts'
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = backend_config["UPLOAD_DIR"]
+ORIGINS = backend_config["ALLOWED_ORIGINS"]
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000",
-    "https://localhost:3000",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,8 +29,8 @@ app.add_middleware(
 
 
 @app.get("/")
-def index():
-    return {"details": "Hello, World"}
+async def index():
+    return {"details": "--Drift Detector Backend--"}
 
 
 @app.get("/test")
@@ -44,3 +52,18 @@ async def upload_files(files: list[UploadFile]):
 
     # Logic to start processing data gets launched from here?
     return {"filenames": [saved_f for f in files]}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    # create upload dir if doesn't exist yet
+    if not os.path.exists(UPLOAD_DIR):
+        os.makedirs(UPLOAD_DIR)
+
+    uvicorn.run(
+        "main:app",
+        host=backend_config["HOST"],
+        port=backend_config["PORT"],
+        reload=backend_config["DEV"],
+    )
