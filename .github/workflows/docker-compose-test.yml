@@ -22,14 +22,14 @@ jobs:
     - name: Test the backend service
       run: |
         # Wait for the backend service to be ready
-        sleep 10
+        sleep 30
         # Test the backend service
         curl http://localhost:8000/health
 
     - name: Test the frontend service
       run: |
         # Wait for the frontend service to be ready
-        sleep 10
+        sleep 30
         # Test the frontend service
         curl http://localhost:3000
 
