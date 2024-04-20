@@ -22,11 +22,20 @@ This project consists of a FastAPI backend and a Next.js frontend. Docker and Do
    pip install -r requirements.txt
    ```
 
+   Alter the default configuration file located in backend/configs or pass one in when running main.py
+
 3. **To Run it:**
    - In the **backend/** directory:
+
+   *Default config*
    ```bash
-   uvicorn main:app --reload --port=8000 --host=0.0.0.0
+   python main.py 
    ```
+   *Pass a config*
+   ```bash
+   python main.py path/to/config.yaml
+   ```
+   
 
 ### Running the Frontend
 
