@@ -10,6 +10,7 @@ This project consists of a FastAPI backend and a Next.js frontend. Docker and Do
 
    - **Python 3.10:** Download the appropriate installer from https://www.python.org/downloads/ .
    - **pip:** Python's package installer (comes bundled with Python).
+   - **configs/default.yaml:** the configs and default.yaml files are necessary if not passing a configuration in. See default.config to view essential variables.
 
 2. **Setting up the Environment:**
 
@@ -22,11 +23,20 @@ This project consists of a FastAPI backend and a Next.js frontend. Docker and Do
    pip install -r requirements.txt
    ```
 
+   Alter the default configuration file located in backend/configs or pass one in when running main.py
+
 3. **To Run it:**
    - In the **backend/** directory:
+
+   *Default config*
    ```bash
-   uvicorn main:app --reload --port=8000 --host=0.0.0.0
+   python main.py 
    ```
+   *Pass a config*
+   ```bash
+   python main.py path/to/config.yaml
+   ```
+   
 
 ### Running the Frontend
 
