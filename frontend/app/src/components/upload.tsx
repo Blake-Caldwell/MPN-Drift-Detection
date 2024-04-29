@@ -82,7 +82,7 @@ export const FileUpload = () => {
 
   return (
     <div>
-      <div className="box-container mx-auto bg-slate-50 p-6 rounded-lg shadow-2xl transition duration-300 ease-in-out hover:scaletransform-105">
+      <div className="box-container mx-auto bg-slate-50 p-6 rounded-lg shadow-2xl transition duration-300 ease-in-out hover:scaletransform-105" style={{width: "420px" }}>
         <div
           className={`border-2 border-dashed ${fileEnter ? "border-blue-500" : "border-slate-300"
             } p-4 rounded-lg flex flex-col items-center justify-center h-48`}
