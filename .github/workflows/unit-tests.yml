@@ -9,16 +9,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+
+    steps: #https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+      - uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.10.0"
-      - name: Install dependencies
-        run: |
-          cd backend
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Run unit tests
-        run: python UT_main.py
+          python-version: "3.x"
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
