@@ -1,7 +1,5 @@
 import { ResponsiveLine, Serie, Datum } from '@nivo/line'
-
-
-type LineData = Serie[];
+import { LineData } from '../../utils/chartUtils'
 
   
 // have to ensure a max height is set on the parent: https://nivo.rocks/line/
