@@ -1,5 +1,5 @@
 # unit lib includes
-import unittest
+import unittest  # see https://docs.python.org/3/library/unittest.html
 from unittest.mock import mock_open, patch
 
 # lib includes
@@ -10,6 +10,7 @@ import yaml
 from src.config.config import Config
 
 
+# CONFIG TESTS
 class TestConfigMethods(unittest.TestCase):
     def setUp(self):
         self.file_name = "testing/test.yaml"
