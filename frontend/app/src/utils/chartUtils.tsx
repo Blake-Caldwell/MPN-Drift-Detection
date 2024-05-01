@@ -1,4 +1,3 @@
-import Serie from '@nivo/line'
 
 export type LineData = Array<{
   id: string;
@@ -9,7 +8,7 @@ export type LineData = Array<{
 }>;
 
 
-// functions to modify the json returns to a format required for nivo charts
+// functions to modify the json returns from backend to a format required for nivo charts
 // im pretty sure these should be dynamic, but for the minute we good
 export const transformLineData = (dfJSON: any): LineData =>  {
 
