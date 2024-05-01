@@ -4,7 +4,7 @@ import os
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.config import Config
+from src.config.config import Config
 
 if len(sys.argv) > 1:
     config_file = sys.argv[1]
