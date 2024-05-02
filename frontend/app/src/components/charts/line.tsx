@@ -5,9 +5,11 @@ import { LineData } from '@/utils/chartUtils'
 type LineChartProps = {
     data: LineData;
   };
+
+  
   
 // have to ensure a max height is set on the parent: https://nivo.rocks/line/
-export const LineChart = ({data}: LineChartProps) => (
+export const LineChart = ({data} : LineChartProps) => (
     <ResponsiveLine
     data={data}
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -42,7 +44,7 @@ export const LineChart = ({data}: LineChartProps) => (
         truncateTickAt: 0
     }}
     enableGridX={false}
-    colors={{ scheme: 'nivo' }}
+    colors={{ scheme: 'category10' }}
     lineWidth={3}
     enablePoints={false}
     pointSize={8}
