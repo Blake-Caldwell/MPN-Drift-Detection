@@ -26,7 +26,7 @@ export default function Results() {
     <div className="flex justify-center text-white">
       <div className="pt-10">
         <h1 className="text-6xl font-serif mb-8">The Drifters (GOATED AS FUCK)</h1>
-        <div className="bg-slate-50 text-slate-900 rounded-lg" style={{height: "500px" }}>
+        <div className="bg-slate-50 text-slate-900 rounded-lg pb-12" style={{height: "400px" }}>
             {data ? <LineChart data={data} /> : <div>Loading...</div>}
           </div>
       </div>

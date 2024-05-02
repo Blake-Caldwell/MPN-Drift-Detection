@@ -1,5 +1,7 @@
-import { ResponsiveLine} from '@nivo/line'
+import { ResponsiveLineCanvas} from '@nivo/line'
 import { LineData } from '@/utils/chartUtils'
+
+import { useState } from 'react';
 
 
 type LineChartProps = {
@@ -10,10 +12,14 @@ type LineChartProps = {
   
 // have to ensure a max height is set on the parent: https://nivo.rocks/line/
 export const LineChart = ({data} : LineChartProps) => (
-    <ResponsiveLine
+
+    <ResponsiveLineCanvas
     data={data}
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-    xScale={{ type: 'point' }}
+    xScale={{
+        type: "time",
+        format: "%Y-%m-%d"
+      }}
     yScale={{
         type: 'linear',
         min: 'auto',
@@ -25,14 +31,17 @@ export const LineChart = ({data} : LineChartProps) => (
     curve="cardinal"
     axisTop={null}
     axisRight={null}
+    
     axisBottom={{
         tickSize: 5,
         tickPadding: 10,
-        tickRotation: -90,
-        legend: 'Days',
+        tickRotation: 30,
+        legend: 'Month',
         legendOffset: -10,
         legendPosition: 'middle',
         truncateTickAt: 0,
+        tickValues: 'every month',
+        format: "%Y-%m-%d"
     }}
     axisLeft={{
         tickSize: 8,
@@ -41,21 +50,24 @@ export const LineChart = ({data} : LineChartProps) => (
         legend: 'Count',
         legendOffset: -50,
         legendPosition: 'middle',
-        truncateTickAt: 0
+        truncateTickAt: 0,
+        format: (value) => {
+            return `${value / 1000}K`
+        }
     }}
     enableGridX={true}
     enableGridY={false}
     colors={{ scheme: 'category10' }}
     lineWidth={1}
-    enablePoints={false}
-    pointSize={8}
+    enablePoints={true}
+    pointSize={2.5}
     pointColor={{ theme: 'background' }}
     pointBorderWidth={2}
     pointBorderColor={{ from: 'serieColor' }}
-    pointLabelYOffset={-12}
+    //pointLabelYOffset={-12}
     areaOpacity={0.05}
     enableTouchCrosshair={true}
-    useMesh={true}
+    //useMesh={true}
 
     areaBaselineValue={0} // Set the baseline value for the area
     
@@ -85,7 +97,7 @@ export const LineChart = ({data} : LineChartProps) => (
             ]
         }
     ]}
-    motionConfig="stiff"
+    //motionConfig="stiff"
 />
 
 )
