@@ -18,34 +18,35 @@ export const LineChart = ({data} : LineChartProps) => (
         type: 'linear',
         min: 'auto',
         max: 'auto',
-        stacked: true,
+        stacked: false,
         reverse: false
     }}
     yFormat=" >-.2f"
-    curve="natural"
+    curve="cardinal"
     axisTop={null}
     axisRight={null}
     axisBottom={{
         tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend: 'transportation',
-        legendOffset: 36,
+        tickPadding: 10,
+        tickRotation: -90,
+        legend: 'Days',
+        legendOffset: -10,
         legendPosition: 'middle',
-        truncateTickAt: 0
+        truncateTickAt: 0,
     }}
     axisLeft={{
-        tickSize: 5,
+        tickSize: 8,
         tickPadding: 5,
         tickRotation: 0,
-        legend: 'count',
-        legendOffset: -40,
+        legend: 'Count',
+        legendOffset: -50,
         legendPosition: 'middle',
         truncateTickAt: 0
     }}
-    enableGridX={false}
+    enableGridX={true}
+    enableGridY={false}
     colors={{ scheme: 'category10' }}
-    lineWidth={3}
+    lineWidth={1}
     enablePoints={false}
     pointSize={8}
     pointColor={{ theme: 'background' }}
@@ -55,9 +56,12 @@ export const LineChart = ({data} : LineChartProps) => (
     areaOpacity={0.05}
     enableTouchCrosshair={true}
     useMesh={true}
+
+    areaBaselineValue={0} // Set the baseline value for the area
+    
     legends={[
         {
-            anchor: 'bottom-right',
+            anchor: 'right',
             direction: 'column',
             justify: false,
             translateX: 100,
@@ -81,7 +85,7 @@ export const LineChart = ({data} : LineChartProps) => (
             ]
         }
     ]}
-    motionConfig="default"
+    motionConfig="stiff"
 />
 
 )
