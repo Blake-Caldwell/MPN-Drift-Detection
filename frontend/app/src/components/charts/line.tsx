@@ -1,4 +1,4 @@
-import { ResponsiveLineCanvas} from '@nivo/line'
+import { ResponsiveLine } from '@nivo/line'
 import { LineData } from '@/utils/chartUtils'
 
 import { useState } from 'react';
@@ -13,7 +13,7 @@ type LineChartProps = {
 // have to ensure a max height is set on the parent: https://nivo.rocks/line/
 export const LineChart = ({data} : LineChartProps) => (
 
-    <ResponsiveLineCanvas
+    <ResponsiveLine
     data={data}
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
     xScale={{
@@ -31,6 +31,13 @@ export const LineChart = ({data} : LineChartProps) => (
     curve="cardinal"
     axisTop={null}
     axisRight={null}
+    enableSlices="x"
+    // zoom={{
+    //     enabled: true,
+    //     mode: 'x',
+    //     onZoomStart: () => {},
+    //     onZoomEnd: () => {},
+    //   }}
     
     axisBottom={{
         tickSize: 5,
