@@ -1,5 +1,7 @@
 import pandas as pd
 import os
+import multiprocessing
+import time
 from LSTM import *
 
 #Temp for testing once config and preprocessing is finished
@@ -40,8 +42,9 @@ start_date='2021-01-01'
 
 #   WIP
 #   Author: Abigail Cummins
-#   Date: 03/05/24
-#   Version: 1
+#   Date: 04/05/24
+#   Version: 2
+#   - Addition of multiprocessing when running models
 
 # ModelRunner Class
     #
@@ -65,29 +68,23 @@ start_date='2021-01-01'
     #   - These results can organised and encapsulated etc. and plotted at the front end
     #
     # TODO:
-    #   - Asynchronous processing
     #   - Integration into the Results and DataProcessing classes
     #   - Missing additions to requirements.txt for the LSTM
     #   - Add unit testing
 
 class ModelRunner():    
-    #to change
     def __init__(self):
-        self._models = []
+        self._prediction = []
 
     @property
-    def models(self):
-        return self._models
+    def prediction(self):
+        return self._prediction
     
-    @models.setter
-    def models(self, m):
-        self._models = m
+    @prediction.setter
+    def prediction(self, m):
+        self._prediction = m
 
-    def addModel(self,newModel):
-        self._models.append(newModel)
-    #to change
-
-    def train_models(self, df, target_column, activity, site_name, num_test_prediction):
+    def train_model(self, df, target_column, activity, site_name, num_test_prediction):
         total_pred_df = pd.DataFrame()
         #models_name = set()
         for i in range(not new_dates_prediction, num_test_prediction+1):
@@ -129,22 +126,41 @@ class ModelRunner():
 
         #models_name = list(models_name)
 
-        return total_pred_df#, models_name
+        result = dict(site_name=site_name, activity=activity, data=total_pred_df)
 
-    #temp for testing 
-    def runModel(self):
+        return result #total_pred_df#, models_name
+    
+    def callback_result(self,result):
+        self.prediction.append(result)
+
+    #temp for testing will be changed once configuration and preprocessing is complete
+    def run_model(self,df_list):
         results = []
 
-        #make folder for storing models
+        #make folder for storing models if it doesn't exist
         os.makedirs("backend/src/models", exist_ok=True)
 
-        for activity in activity_list:
+        pool = multiprocessing.Pool(processes = multiprocessing.cpu_count())
+        start = time.time()
+
+        for data in df_list:
+            activity = data['activity']
+            df = data['data']
+
             print("starting "+activity) 
+
+            df[date_column] = pd.to_datetime(df[date_column])
             target_column = targets[activity]
             
-            #hardcoded for testing purposes
-            df = pd.read_csv(rf"C:\Users\jonah\OneDrive\Desktop\Uni\2024 S1\ICT302\MPN_forecasring_backtest\preprocessed_data\preprocessed_{site_name}_{activity}.csv")
-            
-            results.append(self.train_models(df, target_column, activity, site_name, num_test_prediction))
-            print("finished "+activity)
+            #train each model asynchronously
+            pool.apply_async(self.train_model,args=(df, target_column, activity, site_name, num_test_prediction), callback=self.callback_result)
+
+        pool.close()
+        pool.join()
+
+        #time for testing purposes
+        end = time.time()
+        print('all models finished in ' + str(end-start) + ' seconds')
+
         return results
+    
