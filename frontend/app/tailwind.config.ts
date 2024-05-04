@@ -9,19 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
-        'global-gradient': 'bg-gradient-to-br from-slate-500 to-slate-800', 
-        'other-gradient': 'gradient'
+        'gradient-to-br': 'linear-gradient(to bottom right, var(--tw-gradient-stops))',
       },
-
-      customColours: {
-        
+      colors: {
+        slate: {
+          500: '#64748b',
+          800: '#1e293b',
+        },
       },
-
       zIndex: {
         50: '50',
-      }
+      },
     },
   },
   plugins: [],
 };
+
 export default config;
+
+
