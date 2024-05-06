@@ -48,16 +48,18 @@ def test():
 # also a config file should be used to only allow certain file types
 @app.post("/upload_files")
 async def upload_files(files: list[UploadFile]):
-
     for file in files:
         data = await file.read()
         save_loc = UPLOAD_DIR + "/" + file.filename
         with open(save_loc, "wb") as saved_f:
             saved_f.write(data)
 
-    # Logic to start processing data gets launched from here?
-    return {"filenames": [saved_f for f in files]}
+        if file.filename.endswith('.yaml'):
+            yaml_config = Config(save_loc)
 
+
+    # Logic to start processing data gets launched from here?
+    return {"filenames": [saved_f for f in files], "config": yaml_config}
 
 if __name__ == "__main__":
     import uvicorn
