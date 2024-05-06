@@ -1,48 +1,17 @@
 import pandas as pd
 import os
 import multiprocessing
-from LSTM import *
 
-#Temp for testing once config and preprocessing is finished
-freq = 'W'
-""" The default frequency for the forecast model """
+from src.processing.LSTM import *
 
-date_column = 'DATE'
-""" The date column for the model """
-
-input_chunk_length = 12
-""" The length of the input chunks, required for the forecast model """
-
-forecast_length = 12
-""" The default forecast length for the model """
-
-targets = {
-    "jumbo": "DRIVINGADVANCE",
-    "bogging": "PRIMARY_TONNES",
-    "lhdrilling": "LONGHOLEMETRES",
-    "trucking": "TKM",
-    "trucking_surface_ore": "ORE_TONNES_TO_SURFACE",
-}
-""" The target columns required by the model """
-
-new_dates_prediction = True
-
-num_test_prediction = 5
-""" Backtesting Period Count """
-
-site_name = 'Idobamine'
-""" Mine site name """
-
-activity_list = ['trucking', 'bogging', 'jumbo', 'lhdrilling']
-""" All activities in the MPN model """
-
-start_date='2021-01-01'
-
-#   WIP
 #   Author: Abigail Cummins
-#   Date: 04/05/24
+#   Date: 06/05/24
+#
 #   Version: 2
 #   - Addition of multiprocessing when running models
+#
+#   Version: 3
+#   - Modification to handle Job structures and config files
 
 # ModelRunner Class
     #
@@ -66,23 +35,12 @@ start_date='2021-01-01'
     #   - These results can organised and encapsulated etc. and plotted at the front end
     #
     # TODO:
-    #   - Integration into the Results and DataProcessing classes
     #   - Add unit testing
+    #   - Finish comments and internal documentation
     #   - Fix the FutureWarning caused by concat on empty dataframes
 
 class ModelRunner():    
-    def __init__(self):
-        self._prediction = []
-
-    @property
-    def prediction(self):
-        return self._prediction
-    
-    @prediction.setter
-    def prediction(self, m):
-        self._prediction = m
-
-    def train_model(self, df, target_column, activity, site_name, num_test_prediction):
+    def train_model(self, df, target_column, activity, site_name, num_test_prediction, date_column, new_dates_prediction,forecast_length,freq,input_chunk_length):
         total_pred_df = pd.DataFrame()
         #models_name = set()
         for i in range(not new_dates_prediction, num_test_prediction+1):
@@ -122,35 +80,69 @@ class ModelRunner():
 
         total_pred_df = total_pred_df.reset_index(drop=True)
 
-        result = dict(site_name=site_name, activity=activity, data=total_pred_df)
-
-        return result
+        return total_pred_df
     
-    #callback function for results of the async processing
-    def callback_result(self,result):
-        self.prediction.append(result)
-
-    def run_model(self,df_list):
-        #make folder for storing models if it doesn't exist
+    def run_model(self,jobs):
+        #make folder for storing generated models if it doesn't exist
         os.makedirs("backend/src/models", exist_ok=True)
 
         #set up multiprocessing
         pool = multiprocessing.Pool(processes = multiprocessing.cpu_count())
 
-        for data in df_list:
+        for job in jobs:
+            df = job['result']
+            config = job['config']
 
-            #temp until configuration is complete
-            activity = data['activity']
-            df = data['data']
+            #read config for values used for running models
+            site_name = config['site_name']
+            num_test_prediction = config['num_test_prediction']
+            new_dates_prediction = config['new_dates_prediction']
+            forecast_length = config['forecast_length']
+            freq = config['freq']
+            input_chunk_length = config['input_chunk_length']
+            date_column = config['date_column']
+            target_list = config['targets']
 
-            print("starting "+activity) 
-
-            df[date_column] = pd.to_datetime(df[date_column])
-            target_column = targets[activity]
+            #make a list of all column headers from the dataframe
+            column_list = list(df.columns.values)
             
-            #train each model asynchronously
-            pool.apply_async(self.train_model,args=(df, target_column, activity, site_name, num_test_prediction), callback=self.callback_result)
+            target_column = 'unknown'
+            for target in target_list.values():
+                for column in column_list:
+                    #compare each column header to a target value
+                    if column == target:
+                        #if a match is found assign the target column
+                        target_column = target
 
+            #find activity given the target column
+            activity = list(target_list.keys())[list(target_list.values()).index(target_column)]
+            
+            df[date_column] = pd.to_datetime(df[date_column])
+
+            #train each model asynchronously
+            result = pool.apply_async(self.train_model,args=(
+                df, 
+                target_column, 
+                activity, 
+                site_name, 
+                num_test_prediction, 
+                date_column, 
+                new_dates_prediction,
+                forecast_length,
+                freq,
+                input_chunk_length
+                ))
+            
+            #assign the results async object to the correct job
+            job['result'] = result
+
+        #finish asynchronous processing
         pool.close()
         pool.join()
+
+        #get result from all async objects
+        for job in jobs:
+            job['result'] = job['result'].get()
+
+        return jobs
     
