@@ -1,6 +1,5 @@
 import yaml
 
-
 class Config:
     def __init__(self, file):
         self.FILE_NAME = file
