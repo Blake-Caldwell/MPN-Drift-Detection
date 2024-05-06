@@ -75,7 +75,12 @@ async def progress(job_id):
         raise HTTPException(404, detail="Job id: " + job_id + "not found")
 
     return jobs[job_id]
+        if file.filename.endswith('.yaml'):
+            yaml_config = Config(save_loc)
 
+
+    # Logic to start processing data gets launched from here?
+    return {"filenames": [saved_f for f in files], "config": yaml_config}
 
 if __name__ == "__main__":
     import uvicorn
