@@ -1,0 +1,21 @@
+freq: "W" # The default frequency for the forecast model
+date_column: "DATE" # The date column for the model
+input_chunk_length: 12 # The length of the input chunks, required for the forecast model
+forecast_length: 12 # The default forecast length for the model
+
+targets:
+  jumbo: "DRIVINGADVANCE"
+  bogging: "PRIMARY_TONNES"
+  lhdrilling: "LONGHOLEMETRES"
+  trucking: "TKM"
+  trucking_surface_ore: "ORE_TONNES_TO_SURFACE"
+
+new_dates_prediction: true
+num_test_prediction: 5 # Backtesting Period Count
+site_name: "Idobamine" # Mine site name
+activity_list:
+  - trucking
+  - bogging
+  - jumbo
+  - lhdrilling
+start_date: "2021-01-01"
