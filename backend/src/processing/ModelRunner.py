@@ -1,11 +1,9 @@
 import pandas as pd
 import os
 import multiprocessing
-import time
 from LSTM import *
 
 #Temp for testing once config and preprocessing is finished
-
 freq = 'W'
 """ The default frequency for the forecast model """
 
@@ -69,8 +67,8 @@ start_date='2021-01-01'
     #
     # TODO:
     #   - Integration into the Results and DataProcessing classes
-    #   - Missing additions to requirements.txt for the LSTM
     #   - Add unit testing
+    #   - Fix the FutureWarning caused by concat on empty dataframes
 
 class ModelRunner():    
     def __init__(self):
@@ -124,26 +122,24 @@ class ModelRunner():
 
         total_pred_df = total_pred_df.reset_index(drop=True)
 
-        #models_name = list(models_name)
-
         result = dict(site_name=site_name, activity=activity, data=total_pred_df)
 
-        return result #total_pred_df#, models_name
+        return result
     
+    #callback function for results of the async processing
     def callback_result(self,result):
         self.prediction.append(result)
 
-    #temp for testing will be changed once configuration and preprocessing is complete
     def run_model(self,df_list):
-        results = []
-
         #make folder for storing models if it doesn't exist
         os.makedirs("backend/src/models", exist_ok=True)
 
+        #set up multiprocessing
         pool = multiprocessing.Pool(processes = multiprocessing.cpu_count())
-        start = time.time()
 
         for data in df_list:
+
+            #temp until configuration is complete
             activity = data['activity']
             df = data['data']
 
@@ -157,10 +153,4 @@ class ModelRunner():
 
         pool.close()
         pool.join()
-
-        #time for testing purposes
-        end = time.time()
-        print('all models finished in ' + str(end-start) + ' seconds')
-
-        return results
     
