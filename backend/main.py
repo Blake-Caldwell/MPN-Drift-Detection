@@ -1,7 +1,9 @@
 import sys
 import os
 
-from fastapi import FastAPI, UploadFile
+import uuid
+
+from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config.config import Config
@@ -16,6 +18,10 @@ backend_config = Config(config_file)
 # 'consts'
 UPLOAD_DIR = backend_config["UPLOAD_DIR"]
 ORIGINS = backend_config["ALLOWED_ORIGINS"]
+
+# 'globals'
+
+jobs = {}  # stores progress and results so progress is tracked and can be polled
 
 app = FastAPI()
 
@@ -43,20 +49,32 @@ def test():
     return "Hello from FastAPI"
 
 
-# file uploading
-# this in the future should be session driven. i.e files are stored to a session id.
 # also a config file should be used to only allow certain file types
 @app.post("/upload_files")
 async def upload_files(files: list[UploadFile]):
 
+    job_id = str(uuid())
+
+    # these shouldn't be stored but instead forwarded to the models
     for file in files:
         data = await file.read()
         save_loc = UPLOAD_DIR + "/" + file.filename
         with open(save_loc, "wb") as saved_f:
             saved_f.write(data)
 
+    jobs[job_id] = {"status": "processing", "result": None}
+
     # Logic to start processing data gets launched from here?
-    return {"filenames": [saved_f for f in files]}
+    return {"job_id": job_id}
+
+
+@app.get("/progress/{job_id}")
+async def progress(job_id):
+
+    if job_id not in jobs:
+        raise HTTPException(404, detail="Job id: " + job_id + "not found")
+
+    return jobs[job_id]
 
 
 if __name__ == "__main__":
