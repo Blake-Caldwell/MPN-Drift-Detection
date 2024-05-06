@@ -1,0 +1,10 @@
+# SAMPLE YAML FILE FOR TESTING CONFIG LOADER
+BOOL: true
+
+STRING: "STRING"
+
+ARRAY:
+  - "Item 1"
+  - "Item 2"
+
+INT: 8000
