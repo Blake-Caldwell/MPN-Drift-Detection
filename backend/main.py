@@ -53,7 +53,9 @@ def test():
 @app.post("/upload_files")
 async def upload_files(files: list[UploadFile]):
 
-    job_id = str(uuid())
+    job_id = str(uuid.uuid1())
+
+    yaml_config = None
 
     # these shouldn't be stored but instead forwarded to the models
     for file in files:
@@ -62,9 +64,16 @@ async def upload_files(files: list[UploadFile]):
         with open(save_loc, "wb") as saved_f:
             saved_f.write(data)
 
-    jobs[job_id] = {"status": "processing", "result": None}
+        if file.filename.endswith(".yaml"):
+            yaml_config = Config(save_loc)
 
-    # Logic to start processing data gets launched from here?
+    jobs[job_id] = {"status": "processing", "result": None, "config": yaml_config}
+
+    # if no config, provide default config
+    if not jobs[job_id]["config"]:
+        jobs[job_id]["config"] = Config("configs/defaultLSTM.yaml")
+
+    # Logic to start processing data gets launched from here
     return {"job_id": job_id}
 
 
@@ -75,12 +84,7 @@ async def progress(job_id):
         raise HTTPException(404, detail="Job id: " + job_id + "not found")
 
     return jobs[job_id]
-        if file.filename.endswith('.yaml'):
-            yaml_config = Config(save_loc)
 
-
-    # Logic to start processing data gets launched from here?
-    return {"filenames": [saved_f for f in files], "config": yaml_config}
 
 if __name__ == "__main__":
     import uvicorn
