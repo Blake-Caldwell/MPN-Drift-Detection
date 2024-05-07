@@ -11,7 +11,7 @@ from src.processing.LSTM import *
 #   - Addition of multiprocessing when running models
 #
 #   Version: 3
-#   - Modification to handle Job structures and config files
+#   - Modification to handle Job (Dict{"job_id": ,Dict{"status": , "result": , "config": }}structures and config files
 
 # ModelRunner Class
     #
@@ -82,16 +82,16 @@ class ModelRunner():
 
         return total_pred_df
     
-    def run_model(self,jobs):
+    def run_model(self,jobs: dict[dict]):
         #make folder for storing generated models if it doesn't exist
         os.makedirs("backend/src/models", exist_ok=True)
 
         #set up multiprocessing
         pool = multiprocessing.Pool(processes = multiprocessing.cpu_count())
 
-        for job in jobs:
-            df = job['result']
-            config = job['config']
+        for key in jobs.keys():
+            df = jobs[key]['result']
+            config = jobs[key]['config']
 
             #read config for values used for running models
             site_name = config['site_name']
@@ -120,7 +120,7 @@ class ModelRunner():
             df[date_column] = pd.to_datetime(df[date_column])
 
             #train each model asynchronously
-            result = pool.apply_async(self.train_model,args=(
+            jobs[key]['result'] = pool.apply_async(self.train_model,args=(
                 df, 
                 target_column, 
                 activity, 
@@ -132,17 +132,14 @@ class ModelRunner():
                 freq,
                 input_chunk_length
                 ))
-            
-            #assign the results async object to the correct job
-            job['result'] = result
 
         #finish asynchronous processing
         pool.close()
         pool.join()
 
         #get result from all async objects
-        for job in jobs:
-            job['result'] = job['result'].get()
+        for key in jobs.keys():
+            jobs[key]['result'] = jobs[key]['result'].get()
 
         return jobs
     
