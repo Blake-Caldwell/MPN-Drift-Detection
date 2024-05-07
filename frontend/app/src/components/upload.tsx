@@ -19,7 +19,7 @@ export const FileUpload = () => {
     setFileEnter(false);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => { // wont let duplicate files
     e.preventDefault();
     setFileEnter(false);
 
