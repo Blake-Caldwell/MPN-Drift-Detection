@@ -24,17 +24,24 @@ export const FileUpload = () => {
     setFileEnter(false);
 
     if (e.dataTransfer.files) {
-      [...e.dataTransfer.files].forEach((file, i) => { // to be removed, good for testing
-        console.log(`File ${i + 1}: ${file.name}`);
-      });
+        const newFiles = Array.from(e.dataTransfer.files);
+        const tempFiles: File[] = Array.from(newFiles).filter(file => {
+            const fileName = file.name;
+            const extension = fileName.split('.').pop();
+            if (extension !== 'csv' && extension !== 'yaml') {
+                setShowError([`Unsupported file format!`]); // Give Errors message when wrong file types are placed
+                return false;
+            }
+            if (selectedFiles.some(selectedFile => selectedFile.name === fileName)) {
+                setShowError([`File has already been uploaded!`]); // Error message when the same file is uploaded
+                return false;
+            }
+            return true;
+        });
 
-      const newFiles = e.dataTransfer.files;
-      const tempFiles: File[] = Array.from(newFiles).filter( // this syntax is wild
-        (file) => !selectedFiles.some((selectedFile) => selectedFile.name === file.name)
-      );
-      setSelectedFiles((prevFiles) => [...prevFiles, ...tempFiles]);
+        setSelectedFiles(prevFiles => [...prevFiles, ...tempFiles]);
     }
-  };
+};
 
   const handleClick = () => {
     fileInputRef.current?.click();
@@ -42,11 +49,20 @@ export const FileUpload = () => {
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => { // for file browser
     if (e.target.files) {
-
       const newFiles = e.target.files;
-      const tempFiles: File[] = Array.from(newFiles).filter( // this syntax is wild
-        (file) => !selectedFiles.some((selectedFile) => selectedFile.name === file.name)
-      );
+      const tempFiles: File[] = Array.from(newFiles).filter(file => {
+        const fileName = file.name;
+        const extension = fileName.split('.').pop();
+        if (extension !== 'csv' && extension !== 'yaml') {
+            setShowError([`Unsupported file format!`]);
+            return false;
+        }
+        if (selectedFiles.some(selectedFile => selectedFile.name === fileName)) {
+            setShowError([`File has already been uploaded!`]);
+            return false;
+        }
+        return true;
+    });
       setSelectedFiles((prevFiles) => [...prevFiles, ...tempFiles]);
 
       if (fileInputRef.current) { //used to clear saved state from file browser
