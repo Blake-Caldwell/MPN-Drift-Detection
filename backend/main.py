@@ -3,7 +3,7 @@ import os
 
 import uuid
 
-from fastapi import FastAPI, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, HTTPException, Query, File
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config.config import Config
@@ -51,9 +51,13 @@ def test():
 
 # also a config file should be used to only allow certain file types
 @app.post("/upload_files")
-async def upload_files(files: list[UploadFile]):
+async def upload_files(
+    site_name: str = Query(...), files: list[UploadFile] = File(...)
+):
 
     job_id = str(uuid.uuid1())
+
+    print(f"{job_id} | {site_name}")
 
     yaml_config = None
 
@@ -66,12 +70,19 @@ async def upload_files(files: list[UploadFile]):
 
         if file.filename.endswith(".yaml"):
             yaml_config = Config(save_loc)
+            yaml_config["site_name"] = site_name
 
-    jobs[job_id] = {"status": "processing", "result": None, "config": yaml_config}
+    jobs[job_id] = {
+        "status": "processing",
+        "result": None,
+        "config": yaml_config,
+        "site_name": site_name,
+    }
 
     # if no config, provide default config
     if not jobs[job_id]["config"]:
         jobs[job_id]["config"] = Config("configs/defaultLSTM.yaml")
+        jobs[job_id]["config"]["site_name"] = site_name
 
     # Logic to start processing data gets launched from here
     return {"job_id": job_id}

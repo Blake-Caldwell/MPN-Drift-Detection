@@ -6,18 +6,28 @@ const api = axios.create(
   }
 )
 
-const uploadFiles = async (files: File[]): Promise<any> => {
+const uploadFiles = async (site_name: string, files: File[]): Promise<any> => {
   const formData = new FormData();
+
+  formData.append('site_name', site_name);
   for (const file of files) {
     formData.append('files', file);
   }
 
-  const response = await api.post('/upload_files', formData, { //leave the try/catch to outside
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  return response.data;
+  try {
+    const response = await api.post('/upload_files', formData, {
+      params: {
+        site_name: site_name,
+      },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    throw error;
+  }
 };
 
 const apiModule = { api, uploadFiles };
