@@ -77,6 +77,7 @@ async def upload_files(
         "result": None,
         "config": yaml_config,
         "site_name": site_name,
+        "progress": 0,  # to be used as 0-100 for progress bar
     }
 
     # if no config, provide default config
@@ -88,13 +89,23 @@ async def upload_files(
     return {"job_id": job_id}
 
 
-@app.get("/progress/{job_id}")
+@app.get("/poll/{job_id}")
+async def poll(job_id):
+
+    if job_id not in jobs:
+        raise HTTPException(404, detail="Job id: " + job_id + "not found")
+
+    ret = {"status": jobs[job_id]["status"], "progress": jobs[job_id]["progress"]}
+    return ret
+
+
+@app.get("/fetch_result/{job_id}")
 async def progress(job_id):
 
     if job_id not in jobs:
         raise HTTPException(404, detail="Job id: " + job_id + "not found")
 
-    return jobs[job_id]
+    return jobs[job_id]["result"]
 
 
 if __name__ == "__main__":

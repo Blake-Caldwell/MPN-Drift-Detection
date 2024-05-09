@@ -2,6 +2,7 @@
 import { useState, useRef, ChangeEvent, DragEvent } from "react";
 import apiModule from "../utils/api";
 import ErrorPopup from "./error";
+import { useRouter } from 'next/navigation';
 
 export const FileUpload = () => {
   const [fileEnter, setFileEnter] = useState(false);
@@ -9,6 +10,8 @@ export const FileUpload = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showError, setShowError] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -124,9 +127,11 @@ export const FileUpload = () => {
       });
   
       const results = await Promise.all(uploadPromises);
-      console.log(results); 
-  
-      // page direction should be here towards the dashboard or a loading screen
+      console.log(results);
+
+      const queryParam = encodeURIComponent(JSON.stringify(results));
+      router.push(`/results?data=${queryParam}`);
+      
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);

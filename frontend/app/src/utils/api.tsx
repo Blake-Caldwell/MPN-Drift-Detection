@@ -30,5 +30,60 @@ const uploadFiles = async (site_name: string, files: File[]): Promise<any> => {
   }
 };
 
-const apiModule = { api, uploadFiles };
+export interface Job {
+  jobId: string;
+  siteName: string;
+  status: string;
+  progress: number;
+}
+
+export interface Poll {
+  status: string;
+  progress: number;
+}
+
+const pollJob = async (jobid: string): Promise<Poll> => {
+
+  try
+  {
+    const response = await api.get(`/progress/${jobid}`);
+    const { status, progress } = response.data;
+    return {
+      status,
+      progress,
+    }
+
+  } catch(error) {
+    console.error(`Error polling job ${jobid}:`, error);
+    throw error;
+  }
+
+}
+
+
+const fetchResult = async (jobid: string): Promise<any> => {
+
+  try
+  {
+    const response = await api.get(`/progress/${jobid}`);
+    const { result } = response.data;
+    return {
+      result
+    }
+
+  } catch(error) {
+    console.error(`Error polling job ${jobid}:`, error);
+    throw error;
+  }
+
+}
+
+
+const apiModule = {
+  api,
+  uploadFiles,
+  pollJob,
+  fetchResult
+};
+
 export default apiModule;
