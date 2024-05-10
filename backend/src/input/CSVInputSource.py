@@ -1,4 +1,4 @@
-from InputSource import InputSource
+from src.input.InputSource import InputSource
 
 import pandas as pd
 

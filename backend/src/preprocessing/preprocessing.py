@@ -163,8 +163,8 @@ def read_parquet_files(folder_path):
     # all_data now contains all data from the Parquet files
     return all_data
 
-def preprocessing(input_path: str, save_path: str, activity: str, site_name: str, start_date, add_tsfresh_features):
-    df = pd.read_csv(input_path)
+def preprocessing(df, activity: str, site_name: str, start_date, add_tsfresh_features):
+    #df = pd.read_csv(input_path)
     # df = read_parquet_files(input_path)
     df = df[(df['SITENAME'] == site_name) & (df['DATE'] >= start_date)].reset_index(drop=True)
     df['DATE'] = pd.to_datetime(df['DATE'])
@@ -182,7 +182,8 @@ def preprocessing(input_path: str, save_path: str, activity: str, site_name: str
     ### fill forward missed weeks
     df = df.reset_index(drop=True)[:-1]
     df.set_index('DATE', inplace=True)
-    new_dates = pd.date_range(start=df.index[0], end=df.index[-1], freq='W')
+
+    new_dates = pd.date_range(start=df.index[0], end=df.index[-1], freq='W') #####crash
     df = df.reindex(new_dates)
     df.fillna(method='ffill', inplace=True)
     df['DATE'] = df.index
@@ -192,6 +193,6 @@ def preprocessing(input_path: str, save_path: str, activity: str, site_name: str
 
     columns = ['DATE', target_column] + [col for col in df.columns if col not in ['DATE', target_column]]
     df = df[columns]
-    df.to_csv(save_path, index=False)
+    #df.to_csv(save_path, index=False)
 
     return df
