@@ -1,46 +1,79 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Separator } from "./ui/separator";
 
 interface ErrorPopupProps {
-    items: string[];
-    onClose: () => void;
+  items: string[];
+  onClose: () => void;
 }
 
 const ErrorPopup: React.FC<ErrorPopupProps> = ({ items, onClose }) => {
-    useEffect(() => {
-        const outsideClickCall = (e: MouseEvent) => {
-            const popupContent = document.querySelector('.popup-content');
-            if (popupContent && !popupContent.contains(e.target as Node)) {
-                onClose();
-            }
-        };
+  useEffect(() => {
+    const outsideClickCall = (e: MouseEvent) => {
+      const popupContent = document.querySelector(".popup-content");
+      if (popupContent && !popupContent.contains(e.target as Node)) {
+        onClose();
+      }
+    };
 
-        document.addEventListener('mousedown', outsideClickCall);
+    document.addEventListener("mousedown", outsideClickCall);
 
-        return () => {
-            document.removeEventListener('mousedown', outsideClickCall);
-        };
-    }, [onClose]);
+    return () => {
+      document.removeEventListener("mousedown", outsideClickCall);
+    };
+  }, [onClose]);
 
-    return (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-            <div className=" bg-slate-50 p-6 flex flex-col items-center justify-center rounded-md shadow-lg popup-content">
-                <h3 className="text-xl text-black font-semibold mb-4">Error:</h3>
+  return (
+    // <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    //     <div className=" bg-slate-50 p-6 flex flex-col items-center justify-center rounded-md shadow-lg popup-content">
+    //         <h3 className="text-xl text-black font-semibold mb-4">Error:</h3>
 
-                {items.map((item, index) => (
-                    <p key={index} className="text-md text-red-600 mb-6">
-                        {item}
-                    </p>
-                ))}
+    //         {items.map((item, index) => (
+    //             <p key={index} className="text-md text-red-600 mb-6">
+    //                 {item}
+    //             </p>
+    //         ))}
 
-                <button
-                    onClick={onClose}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                    Close
-                </button>
-            </div>
-        </div>
-    );
+    //         <button
+    //             onClick={onClose}
+    //             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+    //         >
+    //             Close
+    //         </button>
+    //     </div>
+    // </div>
+
+    <AlertDialog open={true} onOpenChange={onClose}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className=" text-slate-900">
+            Error
+            <Separator></Separator>
+            </AlertDialogTitle>
+          <AlertDialogDescription>
+            {items.map((item, index) => (
+              <p key={index} className="text-md text-red-600 mb-6">
+                {item}
+              </p>
+            ))}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogAction onClick={onClose}>Okay</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 };
 
 export default ErrorPopup;

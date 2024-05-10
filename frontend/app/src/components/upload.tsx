@@ -2,12 +2,20 @@
 import { useState, useRef, ChangeEvent, DragEvent } from "react";
 import apiModule from "../utils/api";
 import ErrorPopup from "./error";
-import { useRouter } from 'next/navigation';
+
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
+import { ScrollArea } from "./ui/scroll-area";
+
+import { useRouter } from "next/navigation";
 
 export const FileUpload = () => {
   const [fileEnter, setFileEnter] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [showFileList, setShowFileList] = useState(false);
+
   const [showError, setShowError] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,6 +54,7 @@ export const FileUpload = () => {
       });
 
       setSelectedFiles((prevFiles) => [...prevFiles, ...tempFiles]);
+      setShowFileList(true);
     }
   };
 
@@ -73,6 +82,7 @@ export const FileUpload = () => {
         return true;
       });
       setSelectedFiles((prevFiles) => [...prevFiles, ...tempFiles]);
+      setShowFileList(true);
 
       if (fileInputRef.current) {
         //used to clear saved state from file browser
@@ -82,22 +92,24 @@ export const FileUpload = () => {
   };
 
   const handleRemoveFile = (index: number) => {
-    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setSelectedFiles((prevFiles) => {
+      const updatedFiles = prevFiles.filter((_, i) => i !== index);
+      setShowFileList(updatedFiles.length > 0);
+      return updatedFiles;
+    });
   };
 
   const handleSubmitClick = async () => {
     console.log("Submit!");
     setIsLoading(true); // shows loading spinner
-  
+
     let site_map = new Map<string, File[]>();
     let configFile: File | null = null;
-  
-    selectedFiles.forEach((value: File) => {
 
+    selectedFiles.forEach((value: File) => {
       if (value.name.endsWith(".yaml") || value.name.endsWith(".yml")) {
         configFile = value;
       } else {
-
         const nameParts = value.name.split("_");
         if (nameParts.length >= 2) {
           const site_name = nameParts[1];
@@ -109,36 +121,35 @@ export const FileUpload = () => {
         } else {
           console.warn(`Skipping file ${value.name} due to unexpected format`);
         }
-
       }
     });
-  
+
     try {
+      const uploadPromises = Array.from(site_map.entries()).map(
+        ([site_name, dataFiles]) => {
+          const files = [...dataFiles];
 
-      const uploadPromises = Array.from(site_map.entries()).map(([site_name, dataFiles]) => {
+          if (configFile) {
+            files.push(configFile);
+          }
 
-        const files = [...dataFiles];
-
-        if (configFile) {
-          files.push(configFile);
+          return apiModule
+            .uploadFiles(site_name, files)
+            .then((result) => result);
         }
+      );
 
-
-        return apiModule.uploadFiles(site_name, files).then((result) => result);
-      });
-  
       const results = await Promise.all(uploadPromises);
 
       const queryParam = encodeURIComponent(JSON.stringify(results));
       router.push(`/results?ids=${queryParam}`);
-      
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error);
         setShowError([error.name, error.message]);
       }
     }
-  
+
     setIsLoading(false); // remove spinner
     setSelectedFiles([]); // empty after upload
   };
@@ -195,56 +206,58 @@ export const FileUpload = () => {
       {/* <button onClick={() => logFiles()}>
         Log Collected Files
       </button>  USE THIS FOR DEBUGGING*/}
-      {selectedFiles.length > 0 ? (
-        <div className="text-white pt-8 transition-opacity ease-in duration-700 opacity-100">
-          <h2 className="text-center text-xl pb-3">
-            {" "}
-            {selectedFiles.length} Selected File(s)
-          </h2>
-          <ul className="bg-slate-50 rounded-lg">
-            {selectedFiles.map((file, index) => (
-              <li
-                key={index}
-                className=" flex items-center justify-between text-slate-900 px-4 py-2"
+      {showFileList && (
+  <div
+    className={`text-white pt-8 transition-opacity duration-700 ${
+      showFileList == true ?  "opacity-100" : "opacity-0"
+      }`}
+  >
+    <h2 className="text-center text-lg pb-3">
+      {selectedFiles.length} Selected File(s)
+    </h2>
+    <ScrollArea className="h-48 w-full rounded-lg border bg-slate-50">
+      <div className="p-4">
+        {selectedFiles.map((file, index) => (
+          <div key={index}>
+            <div className="flex items-center text-sm font-semibold justify-between text-slate-900">
+              <span>{file.name}</span>
+              <button
+                className="focus:outline-none hover:scale-105"
+                onClick={() => handleRemoveFile(index)}
               >
-                <span>{file.name}</span>
-                <button
-                  className="text-red-500 hover:text-red-700 focus:outline-none hover:scale-105"
-                  onClick={() => handleRemoveFile(index)}
+                <svg
+                  fill="#972121"
+                  width="48px"
+                  height="24px"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="#972121"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    stroke="currentColor"
-                    strokeWidth="1.1"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.185,1.417c-4.741,0-8.583,3.842-8.583,8.583c0,4.74,3.842,8.582,8.583,8.582S18.768,14.74,18.768,10C18.768,5.259,14.926,1.417,10.185,1.417 M10.185,17.68c-4.235,0-7.679-3.445-7.679-7.68c0-4.235,3.444-7.679,7.679-7.679S17.864,5.765,17.864,10C17.864,14.234,14.42,17.68,10.185,17.68 M10.824,10l2.842-2.844c0.178-0.176,0.178-0.46,0-0.637c-0.177-0.178-0.461-0.178-0.637,0l-2.844,2.841L7.341,6.52c-0.176-0.178-0.46-0.178-0.637,0c-0.178,0.176-0.178,0.461,0,0.637L9.546,10l-2.841,2.844c-0.178,0.176-0.178,0.461,0,0.637c0.178,0.178,0.459,0.178,0.637,0l2.844-2.841l2.844,2.841c0.178,0.178,0.459,0.178,0.637,0c0.178-0.176,0.178-0.461,0-0.637L10.824,10z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex justify-center mt-4">
-            <button
-              className=" bg-green-400 hover:bg-green-500 rounded-3xl text-lg font-semibold text-slate-900 px-6 py-1 transition-all duration-300 ease-in-out transform hover:scale-110"
-              onClick={handleSubmitClick}
-            >
-              Submit
-            </button>
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g
+                    id="SVGRepo_tracerCarrier"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M13.5,11.7928932 L16.1464466,9.14644661 C16.3417088,8.95118446 16.6582912,8.95118446 16.8535534,9.14644661 C17.0488155,9.34170876 17.0488155,9.65829124 16.8535534,9.85355339 L14.2071068,12.5 L16.8535534,15.1464466 C17.0488155,15.3417088 17.0488155,15.6582912 16.8535534,15.8535534 C16.6582912,16.0488155 16.3417088,16.0488155 16.1464466,15.8535534 L13.5,13.2071068 L10.8535534,15.8535534 C10.6582912,16.0488155 10.3417088,16.0488155 10.1464466,15.8535534 C9.95118446,15.6582912 9.95118446,15.3417088 10.1464466,15.1464466 L12.7928932,12.5 L10.1464466,9.85355339 C9.95118446,9.65829124 9.95118446,9.34170876 10.1464466,9.14644661 C10.3417088,8.95118446 10.6582912,8.95118446 10.8535534,9.14644661 L13.5,11.7928932 L13.5,11.7928932 Z M7.28441797,17.4602766 C7.56940871,17.8022655 7.99158013,18 8.43674989,18 L19.5,18 C20.3284271,18 21,17.3284271 21,16.5 L21,8.5 C21,7.67157288 20.3284271,7 19.5,7 L8.43674989,7 C7.99158013,7 7.56940871,7.19773451 7.28441797,7.5397234 L3.15085414,12.5 L7.28441797,17.4602766 Z M2.11588936,12.1799078 L6.51619669,6.899539 C6.99118126,6.32955752 7.69480029,6 8.43674989,6 L19.5,6 C20.8807119,6 22,7.11928813 22,8.5 L22,16.5 C22,17.8807119 20.8807119,19 19.5,19 L8.43674989,19 C7.69480029,19 6.99118126,18.6704425 6.51619669,18.100461 L2.11588936,12.8200922 C1.96137021,12.6346692 1.96137021,12.3653308 2.11588936,12.1799078 Z"></path>
+                  </g>
+                </svg>
+              </button>
+            </div>
+            {index !== selectedFiles.length - 1 && (
+              <Separator className="my-2" />
+            )}
           </div>
-        </div>
-      ) : (
-        <div className="text-white pt-8 transition-opacity ease-in duration-700 opacity-0">
-          {/* Empty state content */}
-        </div>
-      )}
+        ))}
+      </div>
+    </ScrollArea>
+
+    <div className="flex justify-center mt-4">
+      <Button onClick={handleSubmitClick}>Submit</Button>
+    </div>
+  </div>
+)}
 
       {isLoading && ( //https://flowbite.com/docs/components/spinner/
         <div
