@@ -1,8 +1,8 @@
+'use client'
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 
 import apiModule, { Job, Poll } from "@/utils/api";
-import { clearInterval } from "timers";
 
 interface SideNavBarProps {
   jobs: Job[];
@@ -20,7 +20,7 @@ export const SideNavBar: React.FC<SideNavBarProps> = ({
       try {
         const updatedJobsData = await Promise.all(
           jobsData.map(async (job) => {
-            const pollData = await apiModule.pollJob(job.jobId);
+            const pollData = await apiModule.fetchJobDetails(job.jobId, ["status", "progress"]);
             return {
               ...job,
               status: pollData.status,
@@ -32,12 +32,14 @@ export const SideNavBar: React.FC<SideNavBarProps> = ({
       } catch (error) {
         console.error("Error fetching job data:", error);
       }
+
+      console.log("here!")
     };
 
     const intervalId = setInterval(fetchJobsData, 5000); // Poll every 5 seconds
 
     return () => {
-        clearInterval(intervalId)
+        clearInterval(intervalId);
     };
   }, [jobsData]);
 

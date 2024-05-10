@@ -114,23 +114,23 @@ export const FileUpload = () => {
     });
   
     try {
+
       const uploadPromises = Array.from(site_map.entries()).map(([site_name, dataFiles]) => {
+
         const files = [...dataFiles];
+
         if (configFile) {
           files.push(configFile);
         }
-        console.log(files);
-        return apiModule.uploadFiles(site_name, files).then((result) => ({
-          site_name,
-          uuid: result,
-        }));
+
+
+        return apiModule.uploadFiles(site_name, files).then((result) => result);
       });
   
       const results = await Promise.all(uploadPromises);
-      console.log(results);
 
       const queryParam = encodeURIComponent(JSON.stringify(results));
-      router.push(`/results?data=${queryParam}`);
+      router.push(`/results?ids=${queryParam}`);
       
     } catch (error: unknown) {
       if (error instanceof Error) {

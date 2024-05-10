@@ -42,48 +42,26 @@ export interface Poll {
   progress: number;
 }
 
-const pollJob = async (jobid: string): Promise<Poll> => {
-
-  try
-  {
-    const response = await api.get(`/progress/${jobid}`);
-    const { status, progress } = response.data;
-    return {
-      status,
-      progress,
-    }
-
-  } catch(error) {
-    console.error(`Error polling job ${jobid}:`, error);
+//refactor so im not duplicating logic, pass fields wanted in
+const fetchJobDetails = async (jobId: string, fields: string[] = []): Promise<any> => {
+  try {
+    const response = await api.get(`/job/${jobId}`, {
+      params: {
+        fields: fields.join(','),
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching job details for ${jobId}:`, error);
     throw error;
   }
-
-}
-
-
-const fetchResult = async (jobid: string): Promise<any> => {
-
-  try
-  {
-    const response = await api.get(`/progress/${jobid}`);
-    const { result } = response.data;
-    return {
-      result
-    }
-
-  } catch(error) {
-    console.error(`Error polling job ${jobid}:`, error);
-    throw error;
-  }
-
-}
+};
 
 
 const apiModule = {
   api,
   uploadFiles,
-  pollJob,
-  fetchResult
+  fetchJobDetails,
 };
 
 export default apiModule;

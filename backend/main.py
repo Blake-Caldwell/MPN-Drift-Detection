@@ -86,26 +86,24 @@ async def upload_files(
         jobs[job_id]["config"]["site_name"] = site_name
 
     # Logic to start processing data gets launched from here
-    return {"job_id": job_id}
+    return job_id
 
 
-@app.get("/poll/{job_id}")
-async def poll(job_id):
-
-    if job_id not in jobs:
-        raise HTTPException(404, detail="Job id: " + job_id + "not found")
-
-    ret = {"status": jobs[job_id]["status"], "progress": jobs[job_id]["progress"]}
-    return ret
-
-
-@app.get("/fetch_result/{job_id}")
-async def progress(job_id):
+@app.get(
+    "/job/{job_id}"
+)  # stopped the duplicating of the fetch functions, now query at one point
+async def get_job(job_id: str, fields: str = None):
 
     if job_id not in jobs:
-        raise HTTPException(404, detail="Job id: " + job_id + "not found")
+        raise HTTPException(404, detail=f"Job id: {job_id} not found")
 
-    return jobs[job_id]["result"]
+    job = jobs[job_id]
+
+    if fields:
+        requested_fields = fields.split(",")
+        job = {field: job[field] for field in requested_fields if field in job}
+
+    return job
 
 
 if __name__ == "__main__":
