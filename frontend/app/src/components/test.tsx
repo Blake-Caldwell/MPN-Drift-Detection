@@ -30,11 +30,6 @@ function Test_Fast() {
     </div>
   );
 
-  // return (
-  //   <div>
-  //     <pre>{JSON.stringify(data, null, 2)}</pre> 
-  //   </div>
-  // );
 }
 
 export default Test_Fast;
