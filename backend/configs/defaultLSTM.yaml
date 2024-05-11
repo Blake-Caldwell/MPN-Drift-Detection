@@ -14,7 +14,7 @@ new_dates_prediction: true
 num_test_prediction: 5 # Backtesting Period Count
 site_name: 
   - Idobamine
-#  - Abbymine
+  - Abbymine
 activity_list:
   - trucking
   - bogging

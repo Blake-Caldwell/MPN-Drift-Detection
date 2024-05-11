@@ -43,8 +43,8 @@ class ModelRunner():
     def train_model(self, df, target_column, activity, site_name, num_test_prediction, date_column, new_dates_prediction,forecast_length,freq,input_chunk_length):
         total_pred_df = pd.DataFrame()
         #models_name = set()
-        for i in range(not new_dates_prediction, num_test_prediction+1):
-            #logging.info(f'{i+1} Backtest period, {20 * "+"} LSTM model for {activity.upper()} in {site_name.upper()} Site {20 * "+"}')
+        for i in range(not new_dates_prediction, num_test_prediction):
+            print(f'{i+1} Backtest period, {20 * "+"} LSTM model for {activity.upper()} in {site_name.upper()} Site {20 * "+"}')
 
             #### train and test split ###
             train_idx_max = None if i == 0 else -i*forecast_length
@@ -82,53 +82,51 @@ class ModelRunner():
 
         return total_pred_df
     
-    def run_model(self,jobs: dict):
+    def run_model(self,job: dict):
         #make folder for storing generated models if it doesn't exist
         os.makedirs("backend/src/models", exist_ok=True)
 
         #set up multiprocessing
         pool = multiprocessing.Pool(processes = multiprocessing.cpu_count())
 
-        for key in jobs.keys():
-            config = jobs[key]['config']
+        config = job['config']
 
-            site_name = jobs[key]['site_name']
+        site_name = job['site_name']
 
-            #read config for values used for running models
-            num_test_prediction = config['num_test_prediction']
-            new_dates_prediction = config['new_dates_prediction']
-            forecast_length = config['forecast_length']
-            freq = config['freq']
-            input_chunk_length = config['input_chunk_length']
-            date_column = config['date_column']
+        #read config for values used for running models
+        num_test_prediction = config['num_test_prediction']
+        new_dates_prediction = config['new_dates_prediction']
+        forecast_length = config['forecast_length']
+        freq = config['freq']
+        input_chunk_length = config['input_chunk_length']
+        date_column = config['date_column']
 
-            for activity in jobs[key]['result']: 
-                df = jobs[key]['result'][activity]['data_frame']
-                target_column = jobs[key]['result'][activity]['target_column']
-                df[date_column] = pd.to_datetime(df[date_column])
+        for activity in job['result']: 
+            df = job['result'][activity]['data_frame']
+            target_column = job['result'][activity]['target_column']
+            df[date_column] = pd.to_datetime(df[date_column])
 
-                #train each model asynchronously
-                jobs[key]['result'][activity]['pred_data_frame'] = pool.apply_async(self.train_model,args=(
-                    df, 
-                    target_column, 
-                    activity, 
-                    site_name, 
-                    num_test_prediction, 
-                    date_column, 
-                    new_dates_prediction,
-                    forecast_length,
-                    freq,
-                    input_chunk_length
-                    ))
-
+            #train each model asynchronously
+            job['result'][activity]['pred_data_frame'] = pool.apply_async(self.train_model,args=(
+                df, 
+                target_column, 
+                activity, 
+                site_name, 
+                num_test_prediction, 
+                date_column, 
+                new_dates_prediction,
+                forecast_length,
+                freq,
+                input_chunk_length
+                ))
+        
         #finish asynchronous processing
         pool.close()
         pool.join()
 
         #get result from all async objects
-        for key in jobs.keys():
-            for activity in jobs[key]['result']: 
-                jobs[key]['result'][activity]['pred_data_frame'] = jobs[key]['result'][activity]['pred_data_frame'].get()
+        for activity in job['result']: 
+            job['result'][activity]['pred_data_frame'] = job['result'][activity]['pred_data_frame'].get()
 
-        return jobs
+        #return job
     

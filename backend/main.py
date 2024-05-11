@@ -4,13 +4,12 @@ import os
 import uuid
 import time
 import pandas as pd
+from threading import Thread
 
 from fastapi import FastAPI, UploadFile, HTTPException, Query, File
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config.config import Config
-from src.input.CSVInputSource import CSVInputSource
-
 from src.processing.ModelRunner import ModelRunner
 from src.preprocessing.DataProcessor import preprocess
 from src.drift.DriftDetection import DriftDetection
@@ -61,80 +60,77 @@ def test():
 async def upload_files(
     site_name: str = Query(...), files: list[UploadFile] = File(...)
 ):
-    #TODO
-    # - Only load the versions of the files submitted
-    # - Remove the saving of files into uploads
-    # - Potentially add more multiprocessing to improve performances
-    # - Return the output to the frontend
-    
-    # Had to add a local definition as the global was not being instantiated
-    jobs = {}
 
-    #default config file
+    job_id = str(uuid.uuid1())
+
+    #print(f"{job_id} | {site_name}")
+
+    # default unless uploaded
     yaml_config = Config("configs/defaultLSTM.yaml")
 
-    # TO BE REDONE
+    # these shouldn't be stored but instead forwarded to the models
     for file in files:
         data = await file.read()
         save_loc = UPLOAD_DIR + "/" + file.filename
         with open(save_loc, "wb") as saved_f:
             saved_f.write(data)
 
-        #override default config if able
         if file.filename.endswith(".yaml"):
             yaml_config = Config(save_loc)
-            #yaml_config["site_name"] = site_name
+            yaml_config["site_name"] = site_name
 
-    site_name_list = yaml_config["site_name"]
-    activity_list = yaml_config["activity_list"]
+    time_stamp = time.time()
+
+    jobs[job_id] = {
+        "status": "processing",
+        "result": None,
+        "config": yaml_config,
+        "site_name": site_name,
+        "time_stamp": time_stamp,
+        "progress": 0,  # to be used as 0-100 for progress bar
+    }
+
+    activity_list = yaml_config['activity_list']
     target_list = yaml_config['targets']
 
-    # TO BE MODIFIED
-    for site_name in site_name_list:
-        job_id = str(uuid.uuid1())
-        result = {}
+    # Needs a check to confirm that the config activities are submitted before reading for each mine site
+    # Im not sure where this would be implemented
+    result = {}
+    for activity in activity_list:
+        data_frame = pd.read_csv(UPLOAD_DIR+"/"+"mpn_"+site_name+"_"+activity+".csv")
+        target_column = target_list[activity]
+        new_activity = {"data_frame": data_frame, "target_column": target_column}
+        result[activity] = new_activity
 
-        time_stamp = time.time()
-        jobs[job_id] = {"site_name": site_name, "status": "processing", "config": yaml_config, "time_stamp": time_stamp,"result": None}
+    jobs[job_id]['result'] = result
 
-        for activity in activity_list:
-            data_frame = pd.read_csv(UPLOAD_DIR + f"/mpn_{site_name}_{activity}.csv")
-            target_column = target_list[activity]
-            new_activity = {"data_frame": data_frame, "target_column": target_column}
-            result[activity] = new_activity
+    thread = Thread(target=process_job,args=[job_id])
+    # if main thread is closed kill and sub threads
+    thread.daemon = True
+    thread.start()
 
-        jobs[job_id]['result'] = result
-
-    jobs = preprocess(jobs)
-    model_runner = ModelRunner()
-    jobs = model_runner.run_model(jobs)
-
-    drift_detection = DriftDetection()
-
-    for key in jobs.keys():
-        for activity in jobs[key]['result']:
-            df = jobs[key]['result'][activity]['pred_data_frame']
-            #target_column = jobs[key]['result'][activity]['target_column']
-            target_column = 'LSTM'
-            date_column = jobs[key]['config']['date_column']
-            jobs[key]['result'][activity]['drift'] = drift_detection.detect_drift(df,target_column,date_column)
-
-    print(jobs)
-
-    #jobs[job_id] = {
-    #    "status": "processing",
-    #    "result": None,
-    #    "config": yaml_config,
-    #    "site_name": site_name,
-    #}
-
-    # if no config, provide default config
-    #if not jobs[job_id]["config"]:
-    #    jobs[job_id]["config"] = Config("configs/defaultLSTM.yaml")
-    #    jobs[job_id]["config"]["site_name"] = site_name
-
-    # Logic to start processing data gets launched from here
     return job_id
+
+def process_job(job_id):
+    jobs[job_id]['status'] = "Preprocessing"
+    preprocess(jobs[job_id])
+    
+    jobs[job_id]['status'] = "Running models"
+    model_runner = ModelRunner()
+    model_runner.run_model(jobs[job_id])
+
+    jobs[job_id]['status'] = "Detecting Drift"
+    drift_detection = DriftDetection()
+    for activity in jobs[job_id]['result']:
+        df = jobs[job_id]['result'][activity]['pred_data_frame']
+        target_column = 'LSTM'
+        date_column = jobs[job_id]['config']['date_column']
+        jobs[job_id]['result'][activity]['drift'] = drift_detection.detect_drift(df,target_column,date_column)
+
+    jobs[job_id]['status'] = "Complete"
+    jobs[job_id]['progress'] = 100
+
+    print(jobs[job_id])
 
 
 @app.get(

@@ -139,7 +139,7 @@ function ResultsContent() {
                   <br></br> {/* should have like */}
                   <br></br>
                   <Progress value={job.progress} />
-                  {job.status === "complete" && (
+                  {job.status === "Complete" && (
                     <button onClick={() => handleViewResult(job.jobId)}>
                       View Result
                     </button>

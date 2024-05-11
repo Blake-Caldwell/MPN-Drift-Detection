@@ -8,24 +8,21 @@
 import pandas as pd
 from src.preprocessing.preprocessing import preprocessing
 
-def preprocess(jobs: dict):
-    for key in jobs.keys():
-        yaml = jobs[key]['config']
+def preprocess(job):
+    yaml = job['config']
 
-        date_column = yaml['date_column']
-        site_name = jobs[key]['site_name']
-        start_date = yaml['start_date']
+    date_column = yaml['date_column']
+    site_name = job['site_name']
+    start_date = yaml['start_date']
 
-        for activity in jobs[key]['result']: 
-            df = jobs[key]['result'][activity]['data_frame']    
+    for activity in job['result']: 
+        df = job['result'][activity]['data_frame']    
 
-            df = preprocessing(df,activity ,site_name, start_date, add_tsfresh_features=False)
-        
-            df[date_column] = pd.to_datetime(df[date_column])
-
-            jobs[key]['result'][activity]['data_frame'] = df
+        df = preprocessing(df,activity ,site_name, start_date, add_tsfresh_features=False)
     
-    return(jobs)
+        df[date_column] = pd.to_datetime(df[date_column])
+
+        job['result'][activity]['data_frame'] = df
 
 
 
