@@ -43,8 +43,8 @@ class ModelRunner():
     def train_model(self, df, target_column, activity, site_name, num_test_prediction, date_column, new_dates_prediction,forecast_length,freq,input_chunk_length):
         total_pred_df = pd.DataFrame()
         #models_name = set()
-        for i in range(not new_dates_prediction, num_test_prediction+1):
-            #logging.info(f'{i+1} Backtest period, {20 * "+"} LSTM model for {activity.upper()} in {site_name.upper()} Site {20 * "+"}')
+        for i in range(not new_dates_prediction, num_test_prediction):
+            print(f'{i+1} Backtest period, {20 * "+"} LSTM model for {activity.upper()} in {site_name.upper()} Site {20 * "+"}')
 
             #### train and test split ###
             train_idx_max = None if i == 0 else -i*forecast_length
@@ -82,45 +82,32 @@ class ModelRunner():
 
         return total_pred_df
     
-    def run_model(self,jobs: dict[dict]):
+    def run_model(self,job: dict):
         #make folder for storing generated models if it doesn't exist
         os.makedirs("backend/src/models", exist_ok=True)
 
         #set up multiprocessing
         pool = multiprocessing.Pool(processes = multiprocessing.cpu_count())
 
-        for key in jobs.keys():
-            df = jobs[key]['result']
-            config = jobs[key]['config']
+        config = job['config']
 
-            #read config for values used for running models
-            site_name = config['site_name']
-            num_test_prediction = config['num_test_prediction']
-            new_dates_prediction = config['new_dates_prediction']
-            forecast_length = config['forecast_length']
-            freq = config['freq']
-            input_chunk_length = config['input_chunk_length']
-            date_column = config['date_column']
-            target_list = config['targets']
+        site_name = job['site_name']
 
-            #make a list of all column headers from the dataframe
-            column_list = list(df.columns.values)
-            
-            target_column = 'unknown'
-            for target in target_list.values():
-                for column in column_list:
-                    #compare each column header to a target value
-                    if column == target:
-                        #if a match is found assign the target column
-                        target_column = target
+        #read config for values used for running models
+        num_test_prediction = config['num_test_prediction']
+        new_dates_prediction = config['new_dates_prediction']
+        forecast_length = config['forecast_length']
+        freq = config['freq']
+        input_chunk_length = config['input_chunk_length']
+        date_column = config['date_column']
 
-            #find activity given the target column
-            activity = list(target_list.keys())[list(target_list.values()).index(target_column)]
-            
+        for activity in job['result']: 
+            df = job['result'][activity]['data_frame']
+            target_column = job['result'][activity]['target_column']
             df[date_column] = pd.to_datetime(df[date_column])
 
             #train each model asynchronously
-            jobs[key]['result'] = pool.apply_async(self.train_model,args=(
+            job['result'][activity]['pred_data_frame'] = pool.apply_async(self.train_model,args=(
                 df, 
                 target_column, 
                 activity, 
@@ -132,14 +119,14 @@ class ModelRunner():
                 freq,
                 input_chunk_length
                 ))
-
+        
         #finish asynchronous processing
         pool.close()
         pool.join()
 
         #get result from all async objects
-        for key in jobs.keys():
-            jobs[key]['result'] = jobs[key]['result'].get()
+        for activity in job['result']: 
+            job['result'][activity]['pred_data_frame'] = job['result'][activity]['pred_data_frame'].get()
 
-        return jobs
+        #return job
     
