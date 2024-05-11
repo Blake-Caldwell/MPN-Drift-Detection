@@ -68,7 +68,7 @@ async def upload_files(
     # default unless uploaded
     yaml_config = Config("configs/defaultLSTM.yaml")
 
-    # these shouldn't be stored but instead forwarded to the models
+    # Should be redone to not save files
     for file in files:
         data = await file.read()
         save_loc = UPLOAD_DIR + "/" + file.filename
@@ -93,8 +93,6 @@ async def upload_files(
     activity_list = yaml_config['activity_list']
     target_list = yaml_config['targets']
 
-    # Needs a check to confirm that the config activities are submitted before reading for each mine site
-    # Im not sure where this would be implemented
     result = {}
     for activity in activity_list:
         data_frame = pd.read_csv(UPLOAD_DIR+"/"+"mpn_"+site_name+"_"+activity+".csv")
