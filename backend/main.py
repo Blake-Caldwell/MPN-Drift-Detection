@@ -77,6 +77,7 @@ async def upload_files(
         "result": None,
         "config": yaml_config,
         "site_name": site_name,
+        "progress": 0,  # to be used as 0-100 for progress bar
     }
 
     # if no config, provide default config
@@ -85,16 +86,24 @@ async def upload_files(
         jobs[job_id]["config"]["site_name"] = site_name
 
     # Logic to start processing data gets launched from here
-    return {"job_id": job_id}
+    return job_id
 
 
-@app.get("/progress/{job_id}")
-async def progress(job_id):
+@app.get(
+    "/job/{job_id}"
+)  # stopped the duplicating of the fetch functions, now query at one point
+async def get_job(job_id: str, fields: str = None):
 
     if job_id not in jobs:
-        raise HTTPException(404, detail="Job id: " + job_id + "not found")
+        raise HTTPException(404, detail=f"Job id: {job_id} not found")
 
-    return jobs[job_id]
+    job = jobs[job_id]
+
+    if fields:
+        requested_fields = fields.split(",")
+        job = {field: job[field] for field in requested_fields if field in job}
+
+    return job
 
 
 if __name__ == "__main__":

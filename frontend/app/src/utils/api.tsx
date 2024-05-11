@@ -30,5 +30,38 @@ const uploadFiles = async (site_name: string, files: File[]): Promise<any> => {
   }
 };
 
-const apiModule = { api, uploadFiles };
+export interface Job {
+  jobId: string;
+  siteName: string;
+  status: string;
+  progress: number;
+}
+
+export interface Poll {
+  status: string;
+  progress: number;
+}
+
+//refactor so im not duplicating logic, pass fields wanted in
+const fetchJobDetails = async (jobId: string, fields: string[] = []): Promise<any> => {
+  try {
+    const response = await api.get(`/job/${jobId}`, {
+      params: {
+        fields: fields.join(','),
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching job details for ${jobId}:`, error);
+    throw error;
+  }
+};
+
+
+const apiModule = {
+  api,
+  uploadFiles,
+  fetchJobDetails,
+};
+
 export default apiModule;
