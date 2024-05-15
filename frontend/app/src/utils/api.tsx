@@ -57,11 +57,23 @@ const fetchJobDetails = async (jobId: string, fields: string[] = []): Promise<an
   }
 };
 
+const fetchResults = async(jobId: string): Promise<any> => { // Needed because need to alter data before 
+
+  try {
+    const results = await api.get(`/job/${jobId}/results`);
+    return results.data;
+  } catch (error) {
+    console.error(`Error fetching results for ${jobId}:`, error);
+    throw error;
+  }
+};
+
 
 const apiModule = {
   api,
   uploadFiles,
   fetchJobDetails,
+  fetchResults,
 };
 
 export default apiModule;

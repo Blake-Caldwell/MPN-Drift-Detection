@@ -11,6 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import ErrorPopup from "@/components/error";
+import ViewResult from "@/components/viewResult"
+
 import {
   Card,
   CardContent,
@@ -30,6 +33,7 @@ export default function Results() {
 
 function ResultsContent() {
   const [isAsideVisible, setIsAsideVisible] = useState(true);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
   const dataString = searchParams.get("ids");
@@ -76,10 +80,6 @@ function ResultsContent() {
       clearInterval(intervalId);
     };
   }, []);
-
-  const handleViewResult = (jobId: string) => {
-    // spin up a fukn chart or two
-  };
 
   return (
     <div className="grid grid-cols-5">
@@ -139,17 +139,13 @@ function ResultsContent() {
                   <br></br> {/* should have like */}
                   <br></br>
                   <Progress value={job.progress} />
-                  {job.status === "Complete" && (
-                    <button onClick={() => handleViewResult(job.jobId)}>
-                      View Result
-                    </button>
-                  )}
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                  <Button variant="ghost" className=" text-s h-8 underline">
+                  <Button disabled={job.status !== "Complete"} variant="ghost" className=" text-s h-8 underline">
                     Download
                   </Button>
-                  <Button variant="secondary" className="h-8">
+                  <Button disabled={job.status !== "Complete"} variant="secondary" className="h-8"
+                      onClick={() => {setSelectedJobId(job.jobId); console.log(job.jobId)}}>
                     View
                   </Button>
                 </CardFooter>
@@ -177,13 +173,13 @@ function ResultsContent() {
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
                 stroke="#dae4ec"
-                stroke-width="0.6"
+                strokeWidth="0.6"
               >
                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                 <g
                   id="SVGRepo_tracerCarrier"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 ></g>
                 <g id="SVGRepo_iconCarrier">
                   {" "}
@@ -193,7 +189,16 @@ function ResultsContent() {
             </Button>
           )}
         </div>
-        {/* <h1>activity charts go here! </h1> */}
+        <div>
+          {selectedJobId ? (
+            <Suspense fallback={<div>Loading result...</div>}>
+              <ViewResult selectedJobId={selectedJobId} />
+            </Suspense>
+            //<Test_Results></Test_Results>
+          ) : (
+            <div> </div>
+          )}
+        </div>
       </main>
     </div>
   );

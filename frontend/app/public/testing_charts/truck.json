@@ -1,0 +1,1346 @@
+[
+    {
+        "DATE": 1609632000000,
+        "actual": 16908.9379168679,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1610236800000,
+        "actual": 46544.8468971356,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1610841600000,
+        "actual": 41184.8871458463,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1611446400000,
+        "actual": 44290.9836449267,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1612051200000,
+        "actual": 49659.091022457,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1612656000000,
+        "actual": 41294.2332087156,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1613260800000,
+        "actual": 40037.4331507511,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1613865600000,
+        "actual": 50146.2065990189,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1614470400000,
+        "actual": 38185.1556621376,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1615075200000,
+        "actual": 49610.8583518561,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1615680000000,
+        "actual": 49596.958513721,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1616284800000,
+        "actual": 59339.5119049392,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1616889600000,
+        "actual": 65833.4987848654,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1617494400000,
+        "actual": 66710.4526194189,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1618099200000,
+        "actual": 62946.4603879111,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1618704000000,
+        "actual": 60909.0106058205,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1619308800000,
+        "actual": 64451.7000769375,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1619913600000,
+        "actual": 74596.6658880218,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1620518400000,
+        "actual": 63703.4313380321,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1621123200000,
+        "actual": 73710.1844774421,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1621728000000,
+        "actual": 78971.9812389098,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1622332800000,
+        "actual": 80910.9881292627,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1622937600000,
+        "actual": 73563.9346518465,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1623542400000,
+        "actual": 82570.5053442456,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1624147200000,
+        "actual": 76625.4811736958,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1624752000000,
+        "actual": 77410.5408469097,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1625356800000,
+        "actual": 71219.2954246032,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1625961600000,
+        "actual": 50053.8181641734,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1626566400000,
+        "actual": 61411.7323236568,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1627171200000,
+        "actual": 58679.4153252808,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1627776000000,
+        "actual": 52828.0699307177,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1628380800000,
+        "actual": 62827.5382294734,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1628985600000,
+        "actual": 70407.9801727323,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1629590400000,
+        "actual": 60643.7483401385,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1630195200000,
+        "actual": 70335.1853959209,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1630800000000,
+        "actual": 65707.4069562555,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1631404800000,
+        "actual": 66803.1220445871,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1632009600000,
+        "actual": 63992.0168550622,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1632614400000,
+        "actual": 70825.4868898228,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1633219200000,
+        "actual": 62580.9930578451,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1633824000000,
+        "actual": 64810.3901673491,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1634428800000,
+        "actual": 56668.8688805434,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1635033600000,
+        "actual": 53648.1294424645,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1635638400000,
+        "actual": 60528.9482890192,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1636243200000,
+        "actual": 62540.3197824339,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1636848000000,
+        "actual": 51681.6432855551,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1637452800000,
+        "actual": 60113.1995066328,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1638057600000,
+        "actual": 50899.2945863656,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1638662400000,
+        "actual": 48438.047069984,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1639267200000,
+        "actual": 54911.9149735797,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1639872000000,
+        "actual": 67243.3613197405,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1640476800000,
+        "actual": 57777.5309325835,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1641081600000,
+        "actual": 63211.3439482269,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1641686400000,
+        "actual": 50392.5599854022,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1642291200000,
+        "actual": 58539.7931876168,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1642896000000,
+        "actual": 52223.4429807065,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1643500800000,
+        "actual": 47895.2022801655,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1644105600000,
+        "actual": 58387.3869920941,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1644710400000,
+        "actual": 58288.7922043818,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1645315200000,
+        "actual": 60843.7389520624,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1645920000000,
+        "actual": 59133.6048480278,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1646524800000,
+        "actual": 61617.0202820228,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1647129600000,
+        "actual": 58038.3011816889,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1647734400000,
+        "actual": 47790.5040303435,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1648339200000,
+        "actual": 48581.4907602631,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1648944000000,
+        "actual": 59353.8577208531,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1649548800000,
+        "actual": 56874.8336026854,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1650153600000,
+        "actual": 57341.252039881,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1650758400000,
+        "actual": 53417.0386347395,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1651363200000,
+        "actual": 58955.6357905274,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1651968000000,
+        "actual": 45094.5077020553,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1652572800000,
+        "actual": 61147.5593728098,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1653177600000,
+        "actual": 48495.958760894,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1653782400000,
+        "actual": 55919.2897414551,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1654387200000,
+        "actual": 61275.5065633003,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1654992000000,
+        "actual": 63166.8514277567,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1655596800000,
+        "actual": 52426.8950666738,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1656201600000,
+        "actual": 59168.2557589194,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1656806400000,
+        "actual": 69637.605122028,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1657411200000,
+        "actual": 58186.8537243969,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1658016000000,
+        "actual": 50658.5693864138,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1658620800000,
+        "actual": 41392.1089770219,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1659225600000,
+        "actual": 57732.9449502634,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1659830400000,
+        "actual": 45940.7711975817,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1660435200000,
+        "actual": 58547.7987863626,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1661040000000,
+        "actual": 53364.1187740228,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1661644800000,
+        "actual": 56424.8198098337,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1662249600000,
+        "actual": 55142.2078535955,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1662854400000,
+        "actual": 56450.0111123065,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1663459200000,
+        "actual": 60866.251755882,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1664064000000,
+        "actual": 46080.3241631886,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1664668800000,
+        "actual": 53589.7082154085,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1665273600000,
+        "actual": 52516.2462594229,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1665878400000,
+        "actual": 60818.5098993392,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1666483200000,
+        "actual": 58892.8573305843,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1667088000000,
+        "actual": 55143.8460932992,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1667692800000,
+        "actual": 62590.6228417366,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1668297600000,
+        "actual": 57533.933309461,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1668902400000,
+        "actual": 58434.691653332,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1669507200000,
+        "actual": 59524.9064219626,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1670112000000,
+        "actual": 59375.7158760064,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1670716800000,
+        "actual": 49466.658587068,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1671321600000,
+        "actual": 61108.8506984281,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1671926400000,
+        "actual": 57277.0316623339,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1672531200000,
+        "actual": 62700.1108368182,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1673136000000,
+        "actual": 54328.3982358218,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1673740800000,
+        "actual": 65036.6933810515,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1674345600000,
+        "actual": 58180.1592193351,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1674950400000,
+        "actual": 58968.2832187434,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1675555200000,
+        "actual": 56119.7154696697,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1676160000000,
+        "actual": 57102.66910497,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1676764800000,
+        "actual": 49530.9234550338,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1677369600000,
+        "actual": 53902.8300085537,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1677974400000,
+        "actual": 59943.0840818632,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1678579200000,
+        "actual": 52876.8229465645,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1679184000000,
+        "actual": 49715.9926607379,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1679788800000,
+        "actual": 54274.8687131098,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1680393600000,
+        "actual": 67194.1056798385,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1680998400000,
+        "actual": 73822.1811106772,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1681603200000,
+        "actual": 60538.559752314,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1682208000000,
+        "actual": 67016.5429740424,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1682812800000,
+        "actual": 62377.96349552,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1683417600000,
+        "actual": 62134.6367063424,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1684022400000,
+        "actual": 53488.7090662651,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1684627200000,
+        "actual": 56460.5621369854,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1685232000000,
+        "actual": 53715.524626888,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1685836800000,
+        "actual": 54416.7440867875,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1686441600000,
+        "actual": 57075.950689072,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1687046400000,
+        "actual": 50334.7530058129,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1687651200000,
+        "actual": 66430.216659647,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1688256000000,
+        "actual": 68096.8048625045,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1688860800000,
+        "actual": 56603.2467345992,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1689465600000,
+        "actual": 53726.7595181733,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1690070400000,
+        "actual": 59231.4903486784,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1690675200000,
+        "actual": 70016.4705872494,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1691280000000,
+        "actual": 63560.1007705095,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1691884800000,
+        "actual": 70731.7875545689,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1692489600000,
+        "actual": 67672.6240386562,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1693094400000,
+        "actual": 69551.7313767676,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1693699200000,
+        "actual": 64216.855478636,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1694304000000,
+        "actual": 69094.5673020755,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1694908800000,
+        "actual": 63985.5759492818,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1695513600000,
+        "actual": 69786.1785631709,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1696118400000,
+        "actual": 64927.7698716069,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1696723200000,
+        "actual": 67598.4552879717,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1697328000000,
+        "actual": 62781.3426960369,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1697932800000,
+        "actual": 70864.6767248867,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1698537600000,
+        "actual": 72877.3645885165,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1699142400000,
+        "actual": 67442.5934015154,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1699747200000,
+        "actual": 70451.7782682337,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1700352000000,
+        "actual": 69527.3180619882,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1700956800000,
+        "actual": 67967.4345855423,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1701561600000,
+        "actual": 66167.1998888659,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1702166400000,
+        "actual": 76142.1308290389,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1702771200000,
+        "actual": 72720.0529568102,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1703376000000,
+        "actual": 66470.2016904174,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1703980800000,
+        "actual": 61877.4851187642,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1704585600000,
+        "actual": 69735.9320166294,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1705190400000,
+        "actual": 72407.9554662164,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1705795200000,
+        "actual": 72044.4023494452,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1706400000000,
+        "actual": 58964.5296485248,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1707004800000,
+        "actual": 67811.8428820746,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1707609600000,
+        "actual": 69709.0070008154,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1708214400000,
+        "actual": 71735.3321477742,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1708819200000,
+        "actual": 69751.8272251695,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1709424000000,
+        "actual": 66687.845298093,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1710028800000,
+        "actual": 43795.59476536,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    },
+    {
+        "DATE": 1710633600000,
+        "actual": 28121.7425563397,
+        "LSTM": null,
+        "LSTM_low": null,
+        "LSTM_high": null,
+        "drift": "none"
+    }
+]

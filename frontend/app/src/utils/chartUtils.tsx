@@ -9,6 +9,7 @@ export type LineData = Array<{
 // functions to modify the json returns from backend to a format required for nivo charts
 // im pretty sure these should be dynamic, but for the minute we good
 export const transformLineData = (dfJSON: any): LineData => {
+  console.log(dfJSON)
   return [
     {
       id: "LSTM",
