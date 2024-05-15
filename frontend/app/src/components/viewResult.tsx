@@ -19,9 +19,9 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
               const data = await apiModule.fetchResults(selectedJobId);
 
               const activityDataArray = Object.entries(data).map(
-                ([activity, activityData]: [string, any]) => {
+                ([activity, activityDataString]: [string, any]) => {
                 
-                  //console.log(activity, " : ",  activityData)
+                  const activityData = JSON.parse(activityDataString);
                   const lineData = transformLineData(activityData);
                   const barData = transformBarData(activityData);
                   return { activity, lineData, barData, driftData: activityData.drift };
