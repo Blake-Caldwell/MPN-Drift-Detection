@@ -56,7 +56,7 @@ class ModelRunner:
     ):
         total_pred_df = pd.DataFrame()
         # models_name = set()
-        for i in range(not new_dates_prediction, num_test_prediction):
+        for i in range(not new_dates_prediction, num_test_prediction+1):
             print(
                 f'{i+1} Backtest period, {20 * "+"} LSTM model for {activity.upper()} in {site_name.upper()} Site {20 * "+"}'
             )
