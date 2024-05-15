@@ -45,8 +45,8 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
   }
 
   return (
-    <div>
-      <h2 className="text-4xl font-serif font-medium  mb-1">{result.siteName}</h2>
+    <div className=" text-slate-50">
+      <h2 className="text-3xl font-serif font-medium ml-4 mb-1">{result.siteName}</h2>
       <Separator className=" h-0.5"></Separator>
 
       {result.activityDataArray.map(({ activity, lineData, barData }: any) => (
