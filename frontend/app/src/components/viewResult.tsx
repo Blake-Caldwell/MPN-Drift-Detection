@@ -3,11 +3,13 @@ import React, { useState, useEffect } from "react";
 import apiModule from "@/utils/api";
 import { LineChart } from "@/components/charts/line";
 import { BarChart } from "@/components/charts/bar";
-import { transformLineData, transformBarData } from "@/utils/chartUtils";
+import { transformLineData, transformBarData, LineData } from "@/utils/chartUtils";
+import { Separator } from "./ui/separator";
 
 function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
   const [result, setResult] = useState<any>(null);
 
+  useEffect(() => {
     const fetchResult = async () => {
         
       if (selectedJobId) {
@@ -36,6 +38,7 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
     };
 
     fetchResult();
+  }, [selectedJobId]);
 
   if (!selectedJobId || !result) {
     return null;
@@ -43,13 +46,16 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
 
   return (
     <div>
-      <h2>{result.siteName}</h2>
+      <h2 className="text-4xl font-serif font-medium  mb-1">{result.siteName}</h2>
+      <Separator className=" h-0.5"></Separator>
 
       {result.activityDataArray.map(({ activity, lineData, barData }: any) => (
-        <div key={activity}>
-          <h3>Activity: {activity}</h3>
+        
+        <div key={activity} className=" bg-brightness-90 pt-6">
+          <h3 className="ml-24 text-lg ">{(activity as string).charAt(0).toUpperCase() + (activity as string).slice(1)}</h3>
+          <Separator className="ml-20 mb-5 w-56"></Separator>
           <div
-            className="w-10/12 bg-slate-50 text-slate-900 rounded-lg pb-12"
+            className="w-11/12 bg-slate-100 text-slate-900 rounded-lg pb-12"
             style={{ height: "400px" }}
           >
             {lineData ? (
@@ -59,7 +65,7 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
             )}
           </div>
           <div
-            className="mt-10 w-2/3 bg-slate-50 text-slate-900 rounded-lg pb-12"
+            className="mt-10 w-11/12 bg-slate-100 text-slate-900 rounded-lg pb-12"
             style={{ height: "400px" }}
           >
             {barData ? <BarChart data={barData} /> : <div>Writing Bars...</div>}
