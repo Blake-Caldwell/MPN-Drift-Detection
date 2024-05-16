@@ -63,7 +63,7 @@ async def upload_files(
 
     job_id = str(uuid.uuid1())
 
-    #print(f"{job_id} | {site_name}")
+    # print(f"{job_id} | {site_name}")
 
     # default unless uploaded
     yaml_config = Config("configs/defaultLSTM.yaml")
@@ -90,45 +90,51 @@ async def upload_files(
         "progress": 0,  # to be used as 0-100 for progress bar
     }
 
-    activity_list = yaml_config['activity_list']
-    target_list = yaml_config['targets']
+    activity_list = yaml_config["activity_list"]
+    target_list = yaml_config["targets"]
 
     result = {}
     for activity in activity_list:
-        data_frame = pd.read_csv(UPLOAD_DIR+"/"+"mpn_"+site_name+"_"+activity+".csv")
+        data_frame = pd.read_csv(
+            UPLOAD_DIR + "/" + "mpn_" + site_name + "_" + activity + ".csv"
+        )
         target_column = target_list[activity]
         new_activity = {"data_frame": data_frame, "target_column": target_column}
         result[activity] = new_activity
 
-    jobs[job_id]['result'] = result
+    jobs[job_id]["result"] = result
 
-    thread = Thread(target=process_job,args=[job_id])
+    thread = Thread(target=process_job, args=[job_id])
     # if main thread is closed kill and sub threads
     thread.daemon = True
     thread.start()
 
     return job_id
 
+
 def process_job(job_id):
-    jobs[job_id]['status'] = "Preprocessing"
+    jobs[job_id]["status"] = "Preprocessing"
     preprocess(jobs[job_id])
-    
-    jobs[job_id]['status'] = "Running models"
+
+    jobs[job_id]["status"] = "Running models"
     model_runner = ModelRunner()
     model_runner.run_model(jobs[job_id])
+    jobs[job_id]["progress"] = 10
 
-    jobs[job_id]['status'] = "Detecting Drift"
+    jobs[job_id]["status"] = "Detecting Drift"
     drift_detection = DriftDetection()
-    for activity in jobs[job_id]['result']:
-        df = jobs[job_id]['result'][activity]['pred_data_frame']
-        target_column = 'LSTM'
-        date_column = jobs[job_id]['config']['date_column']
-        jobs[job_id]['result'][activity]['drift'] = drift_detection.detect_drift(df,target_column,date_column)
+    for activity in jobs[job_id]["result"]:
+        df = jobs[job_id]["result"][activity]["pred_data_frame"]
+        target_column = "LSTM"
+        date_column = jobs[job_id]["config"]["date_column"]
+        jobs[job_id]["result"][activity]["drift"] = drift_detection.detect_drift(
+            df, target_column, date_column
+        )
 
-    jobs[job_id]['status'] = "Complete"
-    jobs[job_id]['progress'] = 100
+    jobs[job_id]["status"] = "Complete"
+    jobs[job_id]["progress"] = 100
 
-    print(jobs[job_id])
+    # print(jobs[job_id])
 
 
 @app.get(
@@ -146,6 +152,49 @@ async def get_job(job_id: str, fields: str = None):
         job = {field: job[field] for field in requested_fields if field in job}
 
     return job
+
+
+@app.get("/job/{job_id}/results")
+async def get_job_results(job_id: str):
+    if job_id not in jobs:
+        raise HTTPException(404, detail=f"Job id: {job_id} not found")
+
+    job = jobs[job_id]
+
+    if job["status"] != "Complete":
+        raise HTTPException(400, detail=f"Job {job_id} is not completed yet")
+
+    results = {}
+    for activity in job["result"]:
+        data_frame = pd.DataFrame(job["result"][activity]["data_frame"])
+        pred_data_frame = pd.DataFrame(job["result"][activity]["pred_data_frame"])
+        target_column = job["result"][activity]["target_column"]
+        date_column = "DATE"  # Assuming the date column is always "DATE"
+        # drift_data = job["result"][activity]["drift"]
+
+        # extract the target column from the data_frame and rename it to "actual"
+        actual_data = data_frame[[date_column, target_column]].copy()
+        actual_data.rename(columns={target_column: "actual"}, inplace=True)
+
+        # merge the actual data with the pred_data_frame
+        merged_data = pd.merge(
+            actual_data,
+            pred_data_frame,
+            on=date_column,
+            how="left",
+        )
+
+        # print(job["result"][activity]["pred_data_frame"])
+        # print(actual_data)
+
+        # Include the drift data in the result
+        # merged_data["drift"] = drift_data["date"]
+
+        results[activity] = merged_data.to_json(index=False)
+
+    # print(results)
+
+    return results
 
 
 if __name__ == "__main__":

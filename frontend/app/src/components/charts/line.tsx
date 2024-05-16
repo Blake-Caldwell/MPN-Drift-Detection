@@ -66,7 +66,7 @@ export const LineChart = ({data} : LineChartProps) => (
     enableGridY={false}
     colors={{ scheme: 'category10' }}
     lineWidth={1}
-    enablePoints={true}
+    enablePoints={false}
     pointSize={2.5}
     pointColor={{ theme: 'background' }}
     pointBorderWidth={2}
