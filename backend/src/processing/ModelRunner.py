@@ -39,7 +39,6 @@ from src.processing.LSTM import *
 #   - Finish comments and internal documentation
 #   - Fix the FutureWarning caused by concat on empty dataframes
 
-
 class ModelRunner:
     def train_model(
         self,
@@ -87,7 +86,7 @@ class ModelRunner:
                 date_column=date_column,
                 lookback=input_chunk_length,
                 prediction_length=forecast_length,
-                save_to=f"backend/src/models/lstm_{site_name}_{activity}.pkl",
+                save_to=f"src/models/lstm_{site_name}_{activity}.pkl",
                 num_epochs=1068,
                 lr=0.00595,
                 num_layers=2,
@@ -95,7 +94,7 @@ class ModelRunner:
                 feature_importance=feature_importance,
             )
             lstm_preds = lstm.predict(
-                model_path=f"backend/src/models/lstm_{site_name}_{activity}.pkl"
+                model_path=f"src/models/lstm_{site_name}_{activity}.pkl"
             )
             pred_df["LSTM"] = lstm_preds["pred"]
             pred_df["LSTM_low"] = lstm_preds["pred_low"]
@@ -116,10 +115,16 @@ class ModelRunner:
 
     def run_model(self, job: dict):
         # make folder for storing generated models if it doesn't exist
-        os.makedirs("backend/src/models", exist_ok=True)
+        os.makedirs("src/models", exist_ok=True)
+
+        # can be removed
+        # clears previous models to prevent the folder from overflowing
+        for file_name in os.listdir("src/models"):
+           if file_name.endswith(".pkl"):
+                os.remove("src/models/"+file_name)
 
         # set up multiprocessing
-        pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+        pool = multiprocessing.Pool(multiprocessing.cpu_count()-1)
 
         config = job["config"]
 
@@ -164,5 +169,3 @@ class ModelRunner:
             job["result"][activity]["pred_data_frame"] = job["result"][activity][
                 "pred_data_frame"
             ].get()
-
-        # return job

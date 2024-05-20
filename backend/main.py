@@ -22,7 +22,7 @@ else:
 backend_config = Config(config_file)
 
 # 'consts'
-UPLOAD_DIR = backend_config["UPLOAD_DIR"]
+#UPLOAD_DIR = backend_config["UPLOAD_DIR"]
 ORIGINS = backend_config["ALLOWED_ORIGINS"]
 
 # 'globals'
@@ -60,25 +60,13 @@ def test():
 async def upload_files(
     site_name: str = Query(...), files: list[UploadFile] = File(...)
 ):
-
+    # generate a unique ID for the job
     job_id = str(uuid.uuid1())
-
-    # print(f"{job_id} | {site_name}")
 
     # default unless uploaded
     yaml_config = Config("configs/defaultLSTM.yaml")
 
-    # Should be redone to not save files
-    for file in files:
-        data = await file.read()
-        save_loc = UPLOAD_DIR + "/" + file.filename
-        with open(save_loc, "wb") as saved_f:
-            saved_f.write(data)
-
-        if file.filename.endswith(".yaml"):
-            yaml_config = Config(save_loc)
-            yaml_config["site_name"] = site_name
-
+    # time stamp of job creation
     time_stamp = time.time()
 
     jobs[job_id] = {
@@ -90,22 +78,33 @@ async def upload_files(
         "progress": 0,  # to be used as 0-100 for progress bar
     }
 
-    activity_list = yaml_config["activity_list"]
+    # find any uploaded config file and set for the mine site
+    for file in files:
+        if file.filename.endswith(".yaml"):
+            yaml_config = Config(file.file.read())
+    
     target_list = yaml_config["targets"]
 
     result = {}
-    for activity in activity_list:
-        data_frame = pd.read_csv(
-            UPLOAD_DIR + "/" + "mpn_" + site_name + "_" + activity + ".csv"
-        )
-        target_column = target_list[activity]
-        new_activity = {"data_frame": data_frame, "target_column": target_column}
-        result[activity] = new_activity
+    for file in files:
+        if file.filename.endswith(".csv"):
+            # split to get activity portion from filename:
+            # e.g npm_sitename_activity.csv
+            activity = file.filename.split('_')[2].split('.')[0]
 
+            # find target column given an activity
+            target_column = target_list[activity]
+
+            # read data frame from file
+            data_frame = pd.read_csv(file.file)
+            
+            # create an activity given the target column and data frame
+            new_activity = {"data_frame": data_frame, "target_column": target_column}
+            result[activity] = new_activity
     jobs[job_id]["result"] = result
 
     thread = Thread(target=process_job, args=[job_id])
-    # if main thread is closed kill and sub threads
+    # if main thread is closed kill all sub threads
     thread.daemon = True
     thread.start()
 
@@ -113,18 +112,22 @@ async def upload_files(
 
 
 def process_job(job_id):
+    # preprocess the jobs dataframe
     jobs[job_id]["status"] = "Preprocessing"
     preprocess(jobs[job_id])
 
+    # train and run the models on the preprocessed dataframe
     jobs[job_id]["status"] = "Running models"
     model_runner = ModelRunner()
     model_runner.run_model(jobs[job_id])
     jobs[job_id]["progress"] = 10
 
+    # detect drift on the prediction dataframe
     jobs[job_id]["status"] = "Detecting Drift"
     drift_detection = DriftDetection()
     for activity in jobs[job_id]["result"]:
         df = jobs[job_id]["result"][activity]["pred_data_frame"]
+        # detected drift on the LSTM column of the dataframe
         target_column = "LSTM"
         date_column = jobs[job_id]["config"]["date_column"]
         jobs[job_id]["result"][activity]["drift"] = drift_detection.detect_drift(
@@ -133,8 +136,6 @@ def process_job(job_id):
 
     jobs[job_id]["status"] = "Complete"
     jobs[job_id]["progress"] = 100
-
-    # print(jobs[job_id])
 
 
 @app.get(
@@ -199,10 +200,6 @@ async def get_job_results(job_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-
-    # create upload dir if doesn't exist yet
-    if not os.path.exists(UPLOAD_DIR):
-        os.makedirs(UPLOAD_DIR)
 
     uvicorn.run(
         "main:app",
