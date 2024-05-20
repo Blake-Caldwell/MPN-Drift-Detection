@@ -197,67 +197,66 @@ class LSTMTimeseries:
         pred_df['pred_high'] = np.quantile(predictions, q2, axis=1)
         return pred_df
     
-    """ def __feature_importance(
-            self,
-            model,
-            x,
-            y,
-            columns,
-            prediction_length,
-    ):
-        '''
-        compute and show feature importance using a technique called Permutation Feature Importance.
-        in this technique first a model is trained and then the columns are shuffled one by one to 
-        see their effect on mae value.
+    # def __feature_importance(
+    #         self,
+    #         model,
+    #         x,
+    #         y,
+    #         columns,
+    #         prediction_length,
+    # ):
+    #     '''
+    #     compute and show feature importance using a technique called Permutation Feature Importance.
+    #     in this technique first a model is trained and then the columns are shuffled one by one to 
+    #     see their effect on mae value.
         
-        https://www.kaggle.com/code/cdeotte/lstm-feature-importance
-        https://christophm.github.io/interpretable-ml-book/feature-importance.html#feature-importance
+    #     https://www.kaggle.com/code/cdeotte/lstm-feature-importance
+    #     https://christophm.github.io/interpretable-ml-book/feature-importance.html#feature-importance
         
-        '''
+    #     '''
 
-        x = np.copy(x)
-        y = np.copy(y)
-        results = []
+    #     x = np.copy(x)
+    #     y = np.copy(y)
+    #     results = []
 
-        prediction_list = np.zeros((len(y), prediction_length, 100))
-        for j in range(100):
-            # make predictions
-            prediction = model(torch.from_numpy(x).type(torch.Tensor))
-            prediction = prediction.detach().numpy()
-            prediction_list[:,:,j] = prediction
-        predictions = np.array(prediction_list)
-        pred = np.mean(predictions, axis=2)
-        baseline_mae = np.mean(np.abs(pred - y))
+    #     prediction_list = np.zeros((len(y), prediction_length, 100))
+    #     for j in range(100):
+    #         # make predictions
+    #         prediction = model(torch.from_numpy(x).type(torch.Tensor))
+    #         prediction = prediction.detach().numpy()
+    #         prediction_list[:,:,j] = prediction
+    #     predictions = np.array(prediction_list)
+    #     pred = np.mean(predictions, axis=2)
+    #     baseline_mae = np.mean(np.abs(pred - y))
 
-        for k in tqdm(range(len(columns))):
+    #     for k in tqdm(range(len(columns))):
             
-            # SHUFFLE FEATURE K
-            save_col = x[:,:,k].copy()
-            np.random.shuffle(x[:,:,k])
+    #         # SHUFFLE FEATURE K
+    #         save_col = x[:,:,k].copy()
+    #         np.random.shuffle(x[:,:,k])
 
-            prediction_list = np.zeros((len(y), prediction_length, 100))
-            for j in range(100):
-                # make predictions
-                prediction = model(torch.from_numpy(x).type(torch.Tensor))
-                prediction = prediction.detach().numpy()
-                prediction_list[:,:,j] = prediction
-            predictions = np.array(prediction_list)
-            pred = np.mean(predictions, axis=2)
+    #         prediction_list = np.zeros((len(y), prediction_length, 100))
+    #         for j in range(100):
+    #             # make predictions
+    #             prediction = model(torch.from_numpy(x).type(torch.Tensor))
+    #             prediction = prediction.detach().numpy()
+    #             prediction_list[:,:,j] = prediction
+    #         predictions = np.array(prediction_list)
+    #         pred = np.mean(predictions, axis=2)
 
-            mae = np.mean(np.abs(pred - y))
-            mae = max(mae - baseline_mae,0)
-            results.append({'feature':columns[k],'mae':mae})
-            x[:,:,k] = save_col
+    #         mae = np.mean(np.abs(pred - y))
+    #         mae = max(mae - baseline_mae,0)
+    #         results.append({'feature':columns[k],'mae':mae})
+    #         x[:,:,k] = save_col
         
-        df = pd.DataFrame(results)
-        df = df.sort_values('mae')
-        plt.figure(figsize=(5,10))
-        plt.barh(np.arange(len(columns)),df.mae, color='blue')
-        plt.yticks(np.arange(len(columns)),df.feature.values)
-        plt.title('LSTM Feature Importance',size=16)
-        plt.ylim((-1,len(columns)))
-        plt.xlabel('MAE with feature permuted',size=14)
-        plt.ylabel('Feature',size=14)
-        plt.legend()
-        plt.show()
-         """
+    #     df = pd.DataFrame(results)
+    #     df = df.sort_values('mae')
+    #     plt.figure(figsize=(5,10))
+    #     plt.barh(np.arange(len(columns)),df.mae, color='blue')
+    #     plt.yticks(np.arange(len(columns)),df.feature.values)
+    #     plt.title('LSTM Feature Importance',size=16)
+    #     plt.ylim((-1,len(columns)))
+    #     plt.xlabel('MAE with feature permuted',size=14)
+    #     plt.ylabel('Feature',size=14)
+    #     plt.legend()
+    #     plt.show()
