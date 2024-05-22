@@ -136,7 +136,7 @@ function ResultsContent() {
                       }}
                     >
                       <span className="mr-2">View</span>
-                      {job.status !== "Complete" && <BounceLoader size="8" />}
+                      {job.status !== "Complete" && <BounceLoader size="8px" />}
                     </Button>
                   </CardFooter>
                 </Card>
