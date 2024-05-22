@@ -24,6 +24,7 @@ backend_config = Config(config_file)
 # 'consts'
 UPLOAD_DIR = backend_config["UPLOAD_DIR"]
 ORIGINS = backend_config["ALLOWED_ORIGINS"]
+ALLOWED_EXTENSIONS = {'yaml', 'csv'}
 
 # 'globals'
 
@@ -60,6 +61,14 @@ def test():
 async def upload_files(
     site_name: str = Query(...), files: list[UploadFile] = File(...)
 ):
+
+    if not files:
+        raise HTTPException(status_code=400, detail="No files provided")
+
+    for file in files:
+        if not file.filename.split(".") in ALLOWED_EXTENSIONS:
+            raise HTTPException(status_code=400, detail="Only .yaml and .csv files are allowed")
+
 
     job_id = str(uuid.uuid1())
 
