@@ -6,8 +6,12 @@ class Config:
         self.data = self.load_data(file)
 
     def load_data(self, file):
-        with open(file, mode="r") as config:
-            return yaml.load(config, Loader=yaml.FullLoader)
+        if isinstance(file, bytes):
+            return yaml.load(file, Loader=yaml.FullLoader)
+        else:
+            with open(file, mode="r") as config:
+                return yaml.load(config, Loader=yaml.FullLoader)
+        #return yaml.load(file, Loader=yaml.FullLoader)
 
     # the following overloads the index operator [] so we can do:
     # upload_dir = config["UPLOAD_DIR"] etc
