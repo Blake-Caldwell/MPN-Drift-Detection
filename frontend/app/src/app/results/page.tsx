@@ -48,6 +48,12 @@ function ResultsContent() {
     }
   }
 
+
+  const handleReturnButtonClick = () => {
+    window.location.href = '/'; // Navigates to the home page
+  };
+
+
   const [jobs, setJobs] = useState<Job[]>([]);
 
   useEffect(() => {
@@ -142,8 +148,16 @@ function ResultsContent() {
                 </Card>
               );
             })}
-          </div>
-        </ScrollArea>
+
+            </div>
+            <br/>
+            <div className="flex-col justify-center items-center">
+              <Button variant="default" className="text-xs h-8" onClick={handleReturnButtonClick}>
+                Return
+              </Button>
+            </div>
+
+          </ScrollArea>
       </aside>
       <main className=" ml-96 flex-grow mt-0.5 pt-1.5">
         <div>
