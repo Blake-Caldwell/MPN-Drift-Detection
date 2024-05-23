@@ -34,12 +34,11 @@ export interface Job {
   jobId: string;
   siteName: string;
   status: string;
-  progress: number;
+  activities: string[];
 }
 
 export interface Poll {
   status: string;
-  progress: number;
 }
 
 //refactor so im not duplicating logic, pass fields wanted in
