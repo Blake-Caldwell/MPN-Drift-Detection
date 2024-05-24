@@ -75,7 +75,7 @@ async def upload_files(
         "config": yaml_config,
         "site_name": site_name,
         "time_stamp": time_stamp,
-        "progress": 0,  # to be used as 0-100 for progress bar
+        "activities": [] # stores list of the activity names
     }
 
     # find any uploaded config file and set for the mine site
@@ -91,6 +91,8 @@ async def upload_files(
             # split to get activity portion from filename:
             # e.g npm_sitename_activity.csv
             activity = file.filename.split('_')[2].split('.')[0]
+            
+            jobs[job_id]["activities"].append(activity.capitalize())
 
             # find target column given an activity
             target_column = target_list[activity]
@@ -117,10 +119,9 @@ def process_job(job_id):
     preprocess(jobs[job_id])
 
     # train and run the models on the preprocessed dataframe
-    jobs[job_id]["status"] = "Running models"
+    jobs[job_id]["status"] = "Running Models"
     model_runner = ModelRunner()
     model_runner.run_model(jobs[job_id])
-    jobs[job_id]["progress"] = 10
 
     # detect drift on the prediction dataframe
     jobs[job_id]["status"] = "Detecting Drift"
@@ -135,7 +136,6 @@ def process_job(job_id):
         )
 
     jobs[job_id]["status"] = "Complete"
-    jobs[job_id]["progress"] = 100
 
 
 @app.get(
@@ -171,7 +171,7 @@ async def get_job_results(job_id: str):
         pred_data_frame = pd.DataFrame(job["result"][activity]["pred_data_frame"])
         target_column = job["result"][activity]["target_column"]
         date_column = "DATE"  # Assuming the date column is always "DATE"
-        # drift_data = job["result"][activity]["drift"]
+        drift_data = job["result"][activity]["drift"]
 
         # extract the target column from the data_frame and rename it to "actual"
         actual_data = data_frame[[date_column, target_column]].copy()
