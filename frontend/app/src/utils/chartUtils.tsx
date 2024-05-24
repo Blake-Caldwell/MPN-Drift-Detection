@@ -1,3 +1,10 @@
+export const colourScheme: any= {
+  Actual: "#4e79a7",
+  LSTM: "#f28e2b",
+  LSTM_low: "#e15759",
+  LSTM_high: "#76b7b2",
+};
+
 export type LineData = Array<{
   id: string;
   data: Array<{
@@ -11,10 +18,10 @@ export type LineData = Array<{
 export const transformLineData = (dfJSON: any): LineData => {
   return [
     {
-      id: "LSTM",
+      id: "LSTM_high",
       data: Object.entries(dfJSON.DATE).map(([k, v]) => ({
         x: new Date(v as number).toISOString().split("T")[0],
-        y: dfJSON.LSTM[k],
+        y: dfJSON.LSTM_high[k],
       })),
     },
     {
@@ -25,14 +32,14 @@ export const transformLineData = (dfJSON: any): LineData => {
       })),
     },
     {
-      id: "LSTM_high",
+      id: "LSTM",
       data: Object.entries(dfJSON.DATE).map(([k, v]) => ({
         x: new Date(v as number).toISOString().split("T")[0],
-        y: dfJSON.LSTM_high[k],
+        y: dfJSON.LSTM[k],
       })),
     },
     {
-      id: "actual",
+      id: "Actual",
       data: Object.entries(dfJSON.DATE)
         .map(([k, v]) => ({
           x: new Date(v as number).toISOString().split("T")[0],
@@ -47,10 +54,10 @@ export const transformLineData = (dfJSON: any): LineData => {
 
 export type BarData = Array<{
   date: string;
-  Actual: number;
   LSTM: number;
   LSTM_low: number;
   LSTM_high: number;
+  Actual: number;
 }>;
 
 export const transformBarData = (dfJSON: any): BarData => {
@@ -73,10 +80,10 @@ export const transformBarData = (dfJSON: any): BarData => {
     
     bd.push({
       date,
-      Actual: calculateRollingSum(actualValues, i, windowSize),
       LSTM: calculateRollingSum(dfJSON.LSTM, i, windowSize),
       LSTM_low: calculateRollingSum(dfJSON.LSTM_low, i, windowSize),
       LSTM_high: calculateRollingSum(dfJSON.LSTM_high, i, windowSize),
+      Actual: calculateRollingSum(actualValues, i, windowSize),
     });
   }
 

@@ -1,17 +1,16 @@
 import { ResponsiveLine } from '@nivo/line'
-import { LineData } from '@/utils/chartUtils'
-
-import { useState } from 'react';
+import { LineData, colourScheme } from '@/utils/chartUtils'
 
 
 type LineChartProps = {
     data: LineData;
+    target: string;
   };
 
   
   
 // have to ensure a max height is set on the parent: https://nivo.rocks/line/
-export const LineChart = ({data} : LineChartProps) => (
+export const LineChart = ({data, target} : LineChartProps) => (
 
     <ResponsiveLine
     data={data}
@@ -54,17 +53,21 @@ export const LineChart = ({data} : LineChartProps) => (
         tickSize: 8,
         tickPadding: 5,
         tickRotation: 0,
-        legend: 'Count',
+        legend: target,
         legendOffset: -50,
         legendPosition: 'middle',
         truncateTickAt: 0,
         format: (value) => {
-            return `${value / 1000}K`
+            if(value >= 10000)
+            {
+              return `${value / 1000}K`
+            }
+            return `${value}`
         }
     }}
     enableGridX={true}
     enableGridY={false}
-    colors={{ scheme: 'category10' }}
+    colors={({ id }) => colourScheme[id]}
     lineWidth={1}
     enablePoints={false}
     pointSize={2.5}
