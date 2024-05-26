@@ -193,6 +193,7 @@ async def get_job_results(job_id: str):
         results[activity] = {}
         results[activity]["data"] = merged_data.to_json(index=False)
         results[activity]["target_column"] = target_column
+        results[activity]["drift"]
 
     # print(results)
 

@@ -73,7 +73,6 @@ export const transformBarData = (dfJSON: any): BarData => {
   
 
   const actualValues: Array<number> = Object.values(dfJSON.actual);
-  console.log(actualValues);
 
   for (let i = pred_start; i < dataLength; i+=windowSize) {
     const date = new Date(dfJSON.DATE[i]).toISOString().split('T')[0];

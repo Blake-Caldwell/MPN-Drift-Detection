@@ -2,15 +2,16 @@ import { ResponsiveLine } from '@nivo/line'
 import { LineData, colourScheme } from '@/utils/chartUtils'
 
 
-type LineChartProps = {
+interface LineChartProps {
     data: LineData;
     target: string;
-  };
+    driftData?: any;
+  }
 
   
   
 // have to ensure a max height is set on the parent: https://nivo.rocks/line/
-export const LineChart = ({data, target} : LineChartProps) => (
+export const LineChart = ({data, target, driftData} : LineChartProps) => (
 
     <ResponsiveLine
     data={data}
@@ -107,7 +108,19 @@ export const LineChart = ({data, target} : LineChartProps) => (
             ]
         }
     ]}
+    //tooltip={CustomTooltip}
+        markers={
+            driftData &&
+            Object.entries(driftData).map(([date, drift]: [string, any]) => ({
+            axis: "x",
+            value: new Date(date.split("T")[0]), // Extract the date portion in "YYYY-MM-DD" format
+            lineStyle: { stroke: "red", strokeWidth: 0.5, opacity: 10 },
+            legend: `${drift.status} drift detection \n | Difference: ${drift.difference}`,
+            legendOrientation: "horizontal",
+            legendPosition: "top",
+            }))
+        }
     //motionConfig="stiff"
 />
 
-)
+);''

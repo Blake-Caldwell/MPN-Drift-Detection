@@ -23,12 +23,14 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
               const target_column = activityData.target_column;
               const lineData = transformLineData(parsedActivityData);
               const barData = transformBarData(parsedActivityData);
+
+              console.log(activityData.drift)
               return {
                 activity,
                 target_column,
                 lineData,
                 barData,
-                driftData: parsedActivityData.drift,
+                driftData: activityData.drift,
               };
             }
           );
@@ -53,23 +55,23 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
       <h2 className="text-3xl font-serif font-medium ml-4 mb-1">{result.siteName}</h2>
       <Separator className=" h-0.5"></Separator>
 
-      {result.activityDataArray.map(({ activity, target_column, lineData, barData }: any) => (
+      {result.activityDataArray.map(({ activity, target_column, lineData, barData, driftData }: any) => (
         
         <div key={activity} className=" bg-brightness-90 pt-6">
           <h3 className="ml-24 text-lg ">{(activity as string).charAt(0).toUpperCase() + (activity as string).slice(1)}</h3>
           <Separator className="ml-20 mb-5 w-56"></Separator>
           <div
-            className="w-11/12 bg-slate-100 text-slate-900 rounded-lg pb-12"
+            className="w-11/12 bg-slate-100 text-slate-900 rounded-lg pb-3 pl-5"
             style={{ height: "400px" }}
           >
             {lineData ? (
-              <LineChart data={lineData} target={target_column} />
+              <LineChart data={lineData} target={target_column} driftData={driftData} />
             ) : (
               <div>Loading Lines...</div>
             )}
           </div>
           <div
-            className="mt-10 w-11/12 bg-slate-100 text-slate-900 rounded-lg pb-12"
+            className="mt-10 w-11/12 bg-slate-100 text-slate-900 rounded-lg pb-3 pl-3"
             style={{ height: "400px" }}
           >
             {barData ? <BarChart data={barData} target={target_column + " ROLLING SUM"} /> : <div>Writing Bars...</div>}
