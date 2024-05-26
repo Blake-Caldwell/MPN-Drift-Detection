@@ -58,7 +58,7 @@ class DriftDetection:
                 for date, diff in drift_points.items():
                     z_score = difference_z_score[date]
                     #print(f"date: {date}, difference: {diff:.4f}, z_score: {z_score:.4f}, activity: {activity}")
-                    drift_status[date] = {"status": "significant", "difference": f"{diff:.4f}", "z_score": f"{z_score:.4f}"}
+                    drift_status[date] = {"status": "Significant", "difference": f"{diff:.4f}", "z_score": f"{z_score:.4f}"}
                     
             else:
                 #print(f"No significant drift points found above the threshold in {target_column}")

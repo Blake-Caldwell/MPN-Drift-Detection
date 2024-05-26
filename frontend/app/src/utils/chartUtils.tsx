@@ -15,13 +15,14 @@ export type LineData = Array<{
 
 // functions to modify the json returns from backend to a format required for nivo charts
 // im pretty sure these should be dynamic, but for the minute we good
-export const transformLineData = (dfJSON: any): LineData => {
+export const transformLineData = (dfJSON: any, driftData: any = {}): LineData => {
   return [
     {
       id: "LSTM_high",
       data: Object.entries(dfJSON.DATE).map(([k, v]) => ({
         x: new Date(v as number).toISOString().split("T")[0],
         y: dfJSON.LSTM_high[k],
+        drift: driftData[v as number] || null,
       })),
     },
     {
@@ -29,6 +30,7 @@ export const transformLineData = (dfJSON: any): LineData => {
       data: Object.entries(dfJSON.DATE).map(([k, v]) => ({
         x: new Date(v as number).toISOString().split("T")[0],
         y: dfJSON.LSTM_low[k],
+        drift: driftData[v as number] || null,
       })),
     },
     {
@@ -36,6 +38,7 @@ export const transformLineData = (dfJSON: any): LineData => {
       data: Object.entries(dfJSON.DATE).map(([k, v]) => ({
         x: new Date(v as number).toISOString().split("T")[0],
         y: dfJSON.LSTM[k],
+        drift: driftData[v as number] || null,
       })),
     },
     {
@@ -44,6 +47,7 @@ export const transformLineData = (dfJSON: any): LineData => {
         .map(([k, v]) => ({
           x: new Date(v as number).toISOString().split("T")[0],
           y: dfJSON.actual[k],
+          drift: driftData[v as number] || null,
         }))
         .filter(({ y }) => y !== null),
     },
