@@ -9,7 +9,7 @@ interface LineChartProps {
 }
 
 // have to ensure a max height is set on the parent: https://nivo.rocks/line/
-export const LineChart = ({ data, target, driftData }: LineChartProps) => (
+export const LineChart = ({ data, target, driftData }: LineChartProps) =>  (
   <ResponsiveLine
     data={data}
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -106,7 +106,7 @@ export const LineChart = ({ data, target, driftData }: LineChartProps) => (
           axis: "x",
           value: new Date(date.split("T")[0]), // Extract the date portion in "YYYY-MM-DD" format
           lineStyle: { stroke: "#b0413e", strokeWidth: 1.5 },
-          legend: `Date: ${date.split("T")[0]} | Difference: ${drift.difference}`,
+          legend: `${date.split("T")[0]}`,
           legendOrientation: "horizontal",
           legendPosition: "top",
           textStyle: {

@@ -41,7 +41,7 @@ class DriftDetection:
 
         # Define a threshold for detecting significant drift in z-score terms
         #changed to 2 for testing
-        z_threshold = 2.00
+        z_threshold = 1.00
 
         # Determine if there is a significant drift
         drift_detected = (difference_z_score > z_threshold).any()
