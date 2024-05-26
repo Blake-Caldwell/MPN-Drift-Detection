@@ -106,10 +106,10 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
               <div className=" w-2/12 bg-slate-100 text-slate-900 rounded-lg">
                 <ScrollArea className="h-96 rounded-md border">
                   <div className="p-4">
-                    <Label className="justify-center">
+                    <Label className="justify-center text-md mb-2">
                       Identified Drift Occurences
                     </Label>
-                    <Separator className="fill-slate-950 bg-slate-950"></Separator>
+                    <Separator className="fill-slate-950 bg-slate-950 mb-3 h-0.5"></Separator>
                     {driftData &&
                       Object.entries(driftData).map(
                         ([date, drift]: [string, any]) => (
