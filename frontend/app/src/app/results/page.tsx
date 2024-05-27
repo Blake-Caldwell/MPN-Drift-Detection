@@ -15,7 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { DotLoader, BounceLoader, FadeLoader, ClipLoader} from "react-spinners";
 
-import ErrorPopup from "@/components/error";
+import AlertPopup from "@/components/alert";
 import ViewResult from "@/components/viewResult";
 
 import {
@@ -43,6 +43,8 @@ function ResultsContent() {
   
   const [downloadState, setDownloadState] = useState(false);
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
+
+  const [showAlert, setShowAlert] = useState<string[] | null>(null);
 
   const searchParams = useSearchParams();
   const dataString = searchParams.get("ids");
@@ -104,7 +106,7 @@ function ResultsContent() {
   useEffect(() => {
     if (downloadQueue.length == 0 && downloadState == true){
       setDownloadState(false);
-      alert("Downloaded")
+      setShowAlert(["File(s) successfully downloaded"]);
     }
   },[downloadState,downloadQueue])
 
@@ -181,7 +183,7 @@ function ResultsContent() {
           <div className="cards-container flex flex-col space-y-4 bg-transparent">
             <div className="flex justify-between">
               <Button 
-                disabled={!allJobsCompleted}
+                disabled={!allJobsCompleted || downloadState}
                 variant="default" 
                 className="text-xs h-8"
                 onClick={async ()=> {
@@ -228,7 +230,7 @@ function ResultsContent() {
                   </CardContent>
                   <CardFooter className="flex justify-between">
                     <Button
-                      disabled={job.status !== "Complete"}
+                      disabled={job.status !== "Complete" || downloadState}
                       variant="ghost"
                       className="text-s h-8 underline mr-10"
                       onClick={async() => {
@@ -285,7 +287,7 @@ function ResultsContent() {
               </div>
             )}
           </div>
-          <div ref={ref} style={{position: "absolute", top: 7, left: 0.5, zIndex: -1, width: "100%", maxWidth: "5200px"}}>
+          <div ref={ref} style={{position: "absolute", top: 7, left: 0.5, zIndex: -1, width: "100%", maxWidth: "5000px"}}>
             {selectedJobId ? (
               <div id="root" className="p-10 bg-gray-700 bg-opacity-100 shadow-gray-700 shadow-xl rounded-xl">
               </div>
@@ -298,6 +300,9 @@ function ResultsContent() {
             )}
           </div>
         </main>
+        {showAlert && (
+        <AlertPopup items={showAlert} onClose={() => setShowAlert(null)} />
+        )}
       </div>
   );
 }
