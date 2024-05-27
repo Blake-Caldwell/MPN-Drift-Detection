@@ -190,8 +190,10 @@ async def get_job_results(job_id: str):
 
         # Include the drift data in the result
         # merged_data["drift"] = drift_data["date"]
-
-        results[activity] = merged_data.to_json(index=False)
+        results[activity] = {}
+        results[activity]["data"] = merged_data.to_json(index=False)
+        results[activity]["target_column"] = target_column
+        results[activity]["drift"] = drift_data
 
     # print(results)
 
