@@ -1,6 +1,5 @@
 import sys
 import os
-
 import uuid
 import time
 import pandas as pd
@@ -24,9 +23,9 @@ backend_config = Config(config_file)
 # 'consts'
 #UPLOAD_DIR = backend_config["UPLOAD_DIR"]
 ORIGINS = backend_config["ALLOWED_ORIGINS"]
+STALE_THRESHOLD_DAYS = backend_config["STALE_THRESHOLD_DAYS"]
 
 # 'globals'
-
 jobs = {}  # stores progress and results so progress is tracked and can be polled
 
 app = FastAPI()
@@ -198,6 +197,23 @@ async def get_job_results(job_id: str):
     # print(results)
 
     return results
+
+###__________________________###
+def job_check():
+    while True:
+        time.sleep(86400)  # sleep for one day
+        current_time = time.time()
+        stale_time = STALE_THRESHOLD_DAYS * 86400  # convert days to seconds
+        stale_jobs = [job_id for job_id, job in jobs.items() if current_time - job["time_stamp"] > stale_time]
+        for job_id in stale_jobs:
+            del jobs[job_id]
+
+
+###_______________________###
+# start the job check thread
+stale_job_thread = Thread(target=job_check)
+stale_job_thread.daemon = True
+stale_job_thread.start()
 
 
 if __name__ == "__main__":
