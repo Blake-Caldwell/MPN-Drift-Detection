@@ -23,7 +23,7 @@ backend_config = Config(config_file)
 # 'consts'
 #UPLOAD_DIR = backend_config["UPLOAD_DIR"]
 ORIGINS = backend_config["ALLOWED_ORIGINS"]
-STALE_THRESHOLD_DAYS = backend_config["THRESHOLD_DAYS"] ###_____________________________###
+STALE_THRESHOLD_DAYS = backend_config["STALE_THRESHOLD_DAYS"]
 
 # 'globals'
 jobs = {}  # stores progress and results so progress is tracked and can be polled
@@ -211,9 +211,9 @@ def job_check():
 
 ###_______________________###
 # start the job check thread
-thread = Thread(target=job_check)
-thread.daemon = True
-thread.start()
+stale_job_thread = Thread(target=job_check)
+stale_job_thread.daemon = True
+stale_job_thread.start()
 
 
 if __name__ == "__main__":
