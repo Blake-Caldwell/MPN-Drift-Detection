@@ -1,6 +1,5 @@
 import pandas as pd
 import os
-#import multiprocessing
 
 from src.processing.LSTM import *
 
@@ -74,8 +73,6 @@ class ModelRunner:
 
         total_pred_df = total_pred_df.reset_index(drop=True)
 
-        print(total_pred_df)
-
         return total_pred_df
 
     def run_model(self, job: dict):
@@ -87,9 +84,6 @@ class ModelRunner:
         for file_name in os.listdir("src/models"):
            if file_name.endswith(".pkl"):
                 os.remove("src/models/"+file_name)
-
-        # set up multiprocessing
-        # pool = multiprocessing.Pool(multiprocessing.cpu_count()-1)
 
         config = job["config"]
 
@@ -108,6 +102,7 @@ class ModelRunner:
             target_column = job["result"][activity]["target_column"]
             df[date_column] = pd.to_datetime(df[date_column])
 
+            # generate model and train the lstm to the model
             job["result"][activity]["pred_data_frame"] = self.train_model(
                 df,
                 target_column,
@@ -122,30 +117,3 @@ class ModelRunner:
             )   
 
         return job
-
-            # train each model asynchronously
-            # job["result"][activity]["pred_data_frame"] = pool.apply_async(
-            #     self.train_model,
-            #     args=(
-            #         df,
-            #         target_column,
-            #         activity,
-            #         site_name,
-            #         num_test_prediction,
-            #         date_column,
-            #         new_dates_prediction,
-            #         forecast_length,
-            #         freq,
-            #         input_chunk_length,
-            #     ),
-            # )
-
-        # finish asynchronous processing
-        #pool.close()
-        #pool.join()
-
-        # get result from all async objects
-        #for activity in job["result"]:
-        #    job["result"][activity]["pred_data_frame"] = job["result"][activity][
-        #        "pred_data_frame"
-        #    ].get()

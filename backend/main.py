@@ -1,10 +1,9 @@
 import sys
-import os
 
 import uuid
 import time
 import pandas as pd
-from multiprocessing import Process, Manager, Pool, cpu_count
+from multiprocessing import Process, Manager
 
 from fastapi import FastAPI, UploadFile, HTTPException, Query, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,7 +28,6 @@ ORIGINS = backend_config["ALLOWED_ORIGINS"]
 
 manager = Manager()
 jobs = manager.dict() # stores progress and results so progress is tracked and can be polled
-process_list = []
 
 app = FastAPI()
 
@@ -92,7 +90,9 @@ async def upload_files(
             # e.g npm_sitename_activity.csv
             activity = file.filename.split('_')[2].split('.')[0]
             
-            #jobs[job_id]["activities"].append(activity.capitalize())
+            # workaround of a limitation of a manager dict when dealing with nested dict or lists
+            # as modifications of the nested objects are reflected in the shared memory only local
+            # requiring the copying of the manager to a non manager equivalent
             temp = jobs[job_id]    
             temp["activities"].append(activity.capitalize())
             jobs[job_id] = temp
@@ -111,11 +111,11 @@ async def upload_files(
     temp["result"] = result
     jobs[job_id] = temp
 
+    # create a sub process to process the job's data
     process = Process(target=process_job,args=[job_id])
     # kill sub process if the main process ends
     process.daemon = True
     process.start()
-    #process.join()
 
     return job_id
 
@@ -124,8 +124,6 @@ def process_job(job_id):
     temp = jobs[job_id]
     temp["status"] = "Preprocessing"
     jobs[job_id] = temp
-
-    #preprocess(jobs[job_id])
 
     job = jobs[job_id]
     job = preprocess(job)
@@ -158,15 +156,6 @@ def process_job(job_id):
             df, target_column, date_column
         )
     jobs[job_id] = job
-
-    # for activity in jobs[job_id]["result"]:
-    #     df = jobs[job_id]["result"][activity]["pred_data_frame"]
-    #     # detected drift on the LSTM column of the dataframe
-    #     target_column = "LSTM"
-    #     date_column = jobs[job_id]["config"]["date_column"]
-    #     jobs[job_id]["result"][activity]["drift"] = drift_detection.detect_drift(
-    #         df, target_column, date_column
-    #     )
 
     temp = jobs[job_id]
     temp["status"] = "Complete"
@@ -220,17 +209,12 @@ async def get_job_results(job_id: str):
             how="left",
         )
 
-        # print(job["result"][activity]["pred_data_frame"])
-        # print(actual_data)
-
         # Include the drift data in the result
         # merged_data["drift"] = drift_data["date"]
         results[activity] = {}
         results[activity]["data"] = merged_data.to_json(index=False)
         results[activity]["target_column"] = target_column
         results[activity]["drift"] = drift_data
-
-    # print(results)
 
     return results
 
