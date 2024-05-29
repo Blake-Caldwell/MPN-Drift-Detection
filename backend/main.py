@@ -4,7 +4,7 @@ import os
 import uuid
 import time
 import pandas as pd
-from threading import Thread
+from multiprocessing import Process, Manager, Pool, cpu_count
 
 from fastapi import FastAPI, UploadFile, HTTPException, Query, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,7 +27,9 @@ ORIGINS = backend_config["ALLOWED_ORIGINS"]
 
 # 'globals'
 
-jobs = {}  # stores progress and results so progress is tracked and can be polled
+manager = Manager()
+jobs = manager.dict() # stores progress and results so progress is tracked and can be polled
+process_list = []
 
 app = FastAPI()
 
@@ -38,7 +40,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 @app.get("/")
 async def index():
@@ -53,7 +54,6 @@ async def health_check():
 @app.get("/test")
 def test():
     return "Hello from FastAPI"
-
 
 # also a config file should be used to only allow certain file types
 @app.post("/upload_files")
@@ -70,7 +70,7 @@ async def upload_files(
     time_stamp = time.time()
 
     jobs[job_id] = {
-        "status": "processing",
+        "status": "Initialising",
         "result": None,
         "config": yaml_config,
         "site_name": site_name,
@@ -92,7 +92,10 @@ async def upload_files(
             # e.g npm_sitename_activity.csv
             activity = file.filename.split('_')[2].split('.')[0]
             
-            jobs[job_id]["activities"].append(activity.capitalize())
+            #jobs[job_id]["activities"].append(activity.capitalize())
+            temp = jobs[job_id]    
+            temp["activities"].append(activity.capitalize())
+            jobs[job_id] = temp
 
             # find target column given an activity
             target_column = target_list[activity]
@@ -103,39 +106,71 @@ async def upload_files(
             # create an activity given the target column and data frame
             new_activity = {"data_frame": data_frame, "target_column": target_column}
             result[activity] = new_activity
-    jobs[job_id]["result"] = result
+    
+    temp = jobs[job_id]
+    temp["result"] = result
+    jobs[job_id] = temp
 
-    thread = Thread(target=process_job, args=[job_id])
-    # if main thread is closed kill all sub threads
-    thread.daemon = True
-    thread.start()
+    process = Process(target=process_job,args=[job_id])
+    # kill sub process if the main process ends
+    process.daemon = True
+    process.start()
+    #process.join()
 
     return job_id
 
-
 def process_job(job_id):
     # preprocess the jobs dataframe
-    jobs[job_id]["status"] = "Preprocessing"
-    preprocess(jobs[job_id])
+    temp = jobs[job_id]
+    temp["status"] = "Preprocessing"
+    jobs[job_id] = temp
+
+    #preprocess(jobs[job_id])
+
+    job = jobs[job_id]
+    job = preprocess(job)
+    jobs[job_id] = job
 
     # train and run the models on the preprocessed dataframe
-    jobs[job_id]["status"] = "Running Models"
+    temp = jobs[job_id]
+    temp["status"] = "Running Models"
+    jobs[job_id] = temp
+
+    job = jobs[job_id]
     model_runner = ModelRunner()
-    model_runner.run_model(jobs[job_id])
+    job = model_runner.run_model(jobs[job_id])
+    jobs[job_id] = job
 
     # detect drift on the prediction dataframe
-    jobs[job_id]["status"] = "Detecting Drift"
+    temp = jobs[job_id]
+    temp["status"] = "Detecting Drift"
+    jobs[job_id] = temp
+
     drift_detection = DriftDetection()
-    for activity in jobs[job_id]["result"]:
-        df = jobs[job_id]["result"][activity]["pred_data_frame"]
+
+    job = jobs[job_id]
+    for activity in job["result"]:
+        df = job["result"][activity]["pred_data_frame"]
         # detected drift on the LSTM column of the dataframe
         target_column = "LSTM"
-        date_column = jobs[job_id]["config"]["date_column"]
-        jobs[job_id]["result"][activity]["drift"] = drift_detection.detect_drift(
+        date_column = job["config"]["date_column"]
+        job["result"][activity]["drift"] = drift_detection.detect_drift(
             df, target_column, date_column
         )
+    jobs[job_id] = job
 
-    jobs[job_id]["status"] = "Complete"
+    # for activity in jobs[job_id]["result"]:
+    #     df = jobs[job_id]["result"][activity]["pred_data_frame"]
+    #     # detected drift on the LSTM column of the dataframe
+    #     target_column = "LSTM"
+    #     date_column = jobs[job_id]["config"]["date_column"]
+    #     jobs[job_id]["result"][activity]["drift"] = drift_detection.detect_drift(
+    #         df, target_column, date_column
+    #     )
+
+    temp = jobs[job_id]
+    temp["status"] = "Complete"
+    jobs[job_id] = temp
 
 
 @app.get(
@@ -198,7 +233,6 @@ async def get_job_results(job_id: str):
     # print(results)
 
     return results
-
 
 if __name__ == "__main__":
     import uvicorn
