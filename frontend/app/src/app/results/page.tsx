@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import apiModule, { Job } from "@/utils/api";
 
 import { useToPng } from '@hugocxl/react-to-image'
+import { useToSvg } from '@hugocxl/react-to-image'
 import ReactDOM from "react-dom/client";
 
 // https://ui.shadcn.com/docs/components/
@@ -27,6 +28,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 export default function Results() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
@@ -42,6 +52,7 @@ function ResultsContent() {
   const [allJobsCompleted, setAllJobsCompleted] = useState(false);
   
   const [downloadState, setDownloadState] = useState(false);
+  const [downloadType, setDownloadType] = useState("none");
   const [downloadQueue, setDownloadQueue] = useState<string[]>([]);
 
   const [showAlert, setShowAlert] = useState<string[] | null>(null);
@@ -63,7 +74,27 @@ function ResultsContent() {
 
   const [jobs, setJobs] = useState<Job[]>([]);
 
-  const [state, convertToPng, ref] = useToPng<HTMLDivElement>({
+  const [state, convertToPng] = useToPng<HTMLDivElement>({
+    selector: '#download',
+    onSuccess: data => {
+      const link = document.createElement('a');
+
+      let siteName = "";
+      for(let job of jobs) {
+        if(downloadQueue[0] == job.jobId)
+          {
+            siteName = job.siteName;
+          }
+      }
+
+      link.download = 'download_'+siteName;
+      link.href = data;
+      link.click();
+    }
+  })
+
+  const [state2, convertToSvg] = useToSvg<HTMLDivElement>({
+    selector: '#download',
     onSuccess: data => {
       const link = document.createElement('a');
 
@@ -91,7 +122,12 @@ function ResultsContent() {
   },[downloadState,downloadQueue])
 
   const renderCallback = () => {
-    convertToPng();
+    if (downloadType === "PNG"){
+      convertToPng();
+    }
+    else if (downloadType === "SVG"){
+      convertToSvg();
+    }
     setTimeout(downloadCallBack,1000)
   }
 
@@ -182,19 +218,43 @@ function ResultsContent() {
         <ScrollArea className="h-[calc(100vh-20px)] pr-6">
           <div className="cards-container flex flex-col space-y-4 bg-transparent">
             <div className="flex justify-between">
-              <Button 
-                disabled={!allJobsCompleted || downloadState}
-                variant="default" 
-                className="text-xs h-8"
-                onClick={async ()=> {
-                  setDownloadState(true);
-                  for(let job of jobs) {
-                    setDownloadQueue(downloadQueue => [...downloadQueue, job.jobId]);
-                  };
-                }}
-              >
-                Download All
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                <Button
+                  disabled={!allJobsCompleted || downloadState}
+                  variant="default" 
+                  className="text-xs h-8"
+                  >
+                    Download All
+                </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Download As</DropdownMenuLabel>
+                  <DropdownMenuItem
+                    onClick={async ()=> {
+                      setDownloadState(true);
+                      setDownloadType("PNG");
+                      for(let job of jobs) {
+                        setDownloadQueue(downloadQueue => [...downloadQueue, job.jobId]);
+                      };
+                    }}
+                  >
+                    PNG
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={async ()=> {
+                      setDownloadState(true);
+                      setDownloadType("SVG");
+                      for(let job of jobs) {
+                        setDownloadQueue(downloadQueue => [...downloadQueue, job.jobId]);
+                      };
+                    }}
+                  >
+                    SVG
+                  </DropdownMenuItem>
+                </DropdownMenuContent>                         
+              </DropdownMenu>
+
               <Label color="#dae4ec" className="opacity-90 mt-2">
                 MPN Drift Detector
               </Label>
@@ -229,19 +289,41 @@ function ResultsContent() {
                     <Label>{job.status}</Label>
                   </CardContent>
                   <CardFooter className="flex justify-between">
-                    <Button
-                      disabled={job.status !== "Complete" || downloadState}
-                      variant="ghost"
-                      className="text-s h-8 underline mr-10"
-                      onClick={async() => {
-                        setDownloadState(true);
-                        setDownloadQueue([]);
-                        setDownloadQueue(downloadQueue => [...downloadQueue, job.jobId]);
-                      }}
-                    >
-                      Download 
-                      {downloadQueue.includes(job.jobId) && downloadState == true && <ClipLoader size="12px"/>}
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <Button 
+                        variant="secondary"
+                        className="text-s h-8 underline mr-10"
+                        disabled={job.status !== "Complete" || downloadState}
+                        >
+                          Download
+                        {downloadQueue.includes(job.jobId) && downloadState == true && <ClipLoader size="12px"/>}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuLabel>Download As</DropdownMenuLabel>
+                        <DropdownMenuItem
+                          onClick={async() => {
+                            setDownloadState(true);
+                            setDownloadType("PNG")
+                            setDownloadQueue([]);
+                            setDownloadQueue(downloadQueue => [...downloadQueue, job.jobId]);
+                          }}
+                        >
+                          PNG
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={async() => {
+                            setDownloadState(true);
+                            setDownloadType("SVG")
+                            setDownloadQueue([]);
+                            setDownloadQueue(downloadQueue => [...downloadQueue, job.jobId]);
+                          }}
+                        >
+                          SVG
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>                         
+                    </DropdownMenu>
 
                     <Button
                       disabled={job.status !== "Complete"}
@@ -287,7 +369,7 @@ function ResultsContent() {
               </div>
             )}
           </div>
-          <div ref={ref} style={{position: "absolute", top: 7, left: 0.5, zIndex: -1, width: "100%", maxWidth: "5000px"}}>
+          <div id="download" style={{position: "absolute", top: 7, left: 0.5, zIndex: -1, width: "100%", maxWidth: "5000px"}}>
             {selectedJobId ? (
               <div id="root" className="p-10 bg-gray-700 bg-opacity-100 shadow-gray-700 shadow-xl rounded-xl">
               </div>
