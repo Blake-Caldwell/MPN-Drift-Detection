@@ -1,16 +1,16 @@
 import { ResponsiveBar } from '@nivo/bar';
-import { BarData } from '@/utils/chartUtils';
+import { BarData, colourScheme } from '@/utils/chartUtils';
 
 type BarChartProps = {
   data: BarData;
+  target: string;
 };
 
-export const BarChart = ({ data }: BarChartProps) => {
+export const BarChart = ({ data, target }: BarChartProps) => {
   const keys = ["Actual", "LSTM", 
   "LSTM_low", "LSTM_high"
 ];
 
-  console.log(data)
 
   return (
     <ResponsiveBar
@@ -19,12 +19,12 @@ export const BarChart = ({ data }: BarChartProps) => {
       indexBy="date"
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
       padding={0.3}
-      innerPadding={2.5}
+      innerPadding={3}
       groupMode="grouped"
       valueScale={{ type: 'linear' }}
       indexScale={{ type: 'band', round: true }}
-      colors={{ scheme: 'category10' }}
-      borderWidth={3}
+      colors={({ id }) => colourScheme[id]}
+      borderWidth={2}
       borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
       axisTop={null}
       axisRight={null}
@@ -40,11 +40,15 @@ export const BarChart = ({ data }: BarChartProps) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: 'Sum',
+        legend: target,
         legendPosition: 'middle',
         legendOffset: -50,
         format: (value) => {
-            return `${value / 1000}K`
+            if(value > 10000)
+            {
+              return `${value / 1000}K`
+            }
+            return `${value}`
         }
       }}
       enableLabel={false}

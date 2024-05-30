@@ -1,12 +1,11 @@
 import sys
-import os
-
 import uuid
 import time
 import pandas as pd
 from threading import Thread
 from docs.tags import tags_metadata, descr
 
+from multiprocessing import Process, Manager
 
 from fastapi import FastAPI, UploadFile, HTTPException, Query, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,10 +25,12 @@ backend_config = Config(config_file)
 # 'consts'
 #UPLOAD_DIR = backend_config["UPLOAD_DIR"]
 ORIGINS = backend_config["ALLOWED_ORIGINS"]
+STALE_THRESHOLD_DAYS = backend_config["STALE_THRESHOLD_DAYS"]
 
 # 'globals'
 
-jobs = {}  # stores progress and results so progress is tracked and can be polled
+manager = Manager()
+jobs = manager.dict() # stores progress and results so progress is tracked and can be polled
 
 app = FastAPI(
     title="Idoba Drift Detector",
@@ -73,12 +74,12 @@ async def upload_files(
     time_stamp = time.time()
 
     jobs[job_id] = {
-        "status": "processing",
+        "status": "Initialising",
         "result": None,
         "config": yaml_config,
         "site_name": site_name,
         "time_stamp": time_stamp,
-        "progress": 0,  # to be used as 0-100 for progress bar
+        "activities": [] # stores list of the activity names
     }
 
     # find any uploaded config file and set for the mine site
@@ -94,6 +95,13 @@ async def upload_files(
             # split to get activity portion from filename:
             # e.g npm_sitename_activity.csv
             activity = file.filename.split('_')[2].split('.')[0]
+            
+            # workaround of a limitation of a manager dict when dealing with nested dict or lists
+            # as modifications of the nested objects are reflected in the shared memory only local
+            # requiring the copying of the manager to a non manager equivalent
+            temp = jobs[job_id]    
+            temp["activities"].append(activity.capitalize())
+            jobs[job_id] = temp
 
             # find target column given an activity
             target_column = target_list[activity]
@@ -104,41 +112,60 @@ async def upload_files(
             # create an activity given the target column and data frame
             new_activity = {"data_frame": data_frame, "target_column": target_column}
             result[activity] = new_activity
-    jobs[job_id]["result"] = result
+    
+    temp = jobs[job_id]
+    temp["result"] = result
+    jobs[job_id] = temp
 
-    thread = Thread(target=process_job, args=[job_id])
-    # if main thread is closed kill all sub threads
-    thread.daemon = True
-    thread.start()
+    # create a sub process to process the job's data
+    process = Process(target=process_job,args=[job_id])
+    # kill sub process if the main process ends
+    process.daemon = True
+    process.start()
 
     return job_id
 
-
 def process_job(job_id):
     # preprocess the jobs dataframe
-    jobs[job_id]["status"] = "Preprocessing"
-    preprocess(jobs[job_id])
+    temp = jobs[job_id]
+    temp["status"] = "Preprocessing"
+    jobs[job_id] = temp
+
+    job = jobs[job_id]
+    job = preprocess(job)
+    jobs[job_id] = job
 
     # train and run the models on the preprocessed dataframe
-    jobs[job_id]["status"] = "Running models"
+    temp = jobs[job_id]
+    temp["status"] = "Running Models"
+    jobs[job_id] = temp
+
+    job = jobs[job_id]
     model_runner = ModelRunner()
-    model_runner.run_model(jobs[job_id])
-    jobs[job_id]["progress"] = 10
+    job = model_runner.run_model(jobs[job_id])
+    jobs[job_id] = job
 
     # detect drift on the prediction dataframe
-    jobs[job_id]["status"] = "Detecting Drift"
+    temp = jobs[job_id]
+    temp["status"] = "Detecting Drift"
+    jobs[job_id] = temp
+
     drift_detection = DriftDetection()
-    for activity in jobs[job_id]["result"]:
-        df = jobs[job_id]["result"][activity]["pred_data_frame"]
+
+    job = jobs[job_id]
+    for activity in job["result"]:
+        df = job["result"][activity]["pred_data_frame"]
         # detected drift on the LSTM column of the dataframe
         target_column = "LSTM"
-        date_column = jobs[job_id]["config"]["date_column"]
-        jobs[job_id]["result"][activity]["drift"] = drift_detection.detect_drift(
+        date_column = job["config"]["date_column"]
+        job["result"][activity]["drift"] = drift_detection.detect_drift(
             df, target_column, date_column
         )
+    jobs[job_id] = job
 
-    jobs[job_id]["status"] = "Complete"
-    jobs[job_id]["progress"] = 100
+    temp = jobs[job_id]
+    temp["status"] = "Complete"
+    jobs[job_id] = temp
 
 
 @app.get("/job/{job_id}", tags=["job"])  # stopped the duplicating of the fetch functions, now query at one point
@@ -172,7 +199,7 @@ async def get_job_results(job_id: str):
         pred_data_frame = pd.DataFrame(job["result"][activity]["pred_data_frame"])
         target_column = job["result"][activity]["target_column"]
         date_column = "DATE"  # Assuming the date column is always "DATE"
-        # drift_data = job["result"][activity]["drift"]
+        drift_data = job["result"][activity]["drift"]
 
         # extract the target column from the data_frame and rename it to "actual"
         actual_data = data_frame[[date_column, target_column]].copy()
@@ -186,17 +213,31 @@ async def get_job_results(job_id: str):
             how="left",
         )
 
-        # print(job["result"][activity]["pred_data_frame"])
-        # print(actual_data)
-
         # Include the drift data in the result
         # merged_data["drift"] = drift_data["date"]
-
-        results[activity] = merged_data.to_json(index=False)
-
-    # print(results)
+        results[activity] = {}
+        results[activity]["data"] = merged_data.to_json(index=False)
+        results[activity]["target_column"] = target_column
+        results[activity]["drift"] = drift_data
 
     return results
+
+###__________________________###
+def job_check():
+    while True:
+        time.sleep(86400)  # sleep for one day
+        current_time = time.time()
+        stale_time = STALE_THRESHOLD_DAYS * 86400  # convert days to seconds
+        stale_jobs = [job_id for job_id, job in jobs.items() if current_time - job["time_stamp"] > stale_time]
+        for job_id in stale_jobs:
+            del jobs[job_id]
+
+
+###_______________________###
+# start the job check thread
+stale_job_thread = Thread(target=job_check)
+stale_job_thread.daemon = True
+stale_job_thread.start()
 
 
 if __name__ == "__main__":
