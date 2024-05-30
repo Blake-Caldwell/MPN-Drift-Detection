@@ -3,6 +3,8 @@ import uuid
 import time
 import pandas as pd
 from threading import Thread
+from docs.tags import tags_metadata, descr
+
 from multiprocessing import Process, Manager
 
 from fastapi import FastAPI, UploadFile, HTTPException, Query, File
@@ -30,7 +32,13 @@ STALE_THRESHOLD_DAYS = backend_config["STALE_THRESHOLD_DAYS"]
 manager = Manager()
 jobs = manager.dict() # stores progress and results so progress is tracked and can be polled
 
-app = FastAPI()
+app = FastAPI(
+    title="Idoba Drift Detector",
+    summary="Idoba Drift Detector created by The Drifters at Murdoch Uni for ICT302.",
+    version="1",
+    description=descr,
+    openapi_tags=tags_metadata
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,17 +53,14 @@ async def index():
     return {"details": "--Drift Detector Backend--"}
 
 
-@app.get("/health")  # required for github action docker build
+@app.get("/health", tags=["Health"])  # required for github action docker build
 async def health_check():
     return {"status": "OK"}
 
 
-@app.get("/test")
-def test():
-    return "Hello from FastAPI"
 
 # also a config file should be used to only allow certain file types
-@app.post("/upload_files")
+@app.post("/upload_files", tags=["upload"])
 async def upload_files(
     site_name: str = Query(...), files: list[UploadFile] = File(...)
 ):
@@ -163,9 +168,7 @@ def process_job(job_id):
     jobs[job_id] = temp
 
 
-@app.get(
-    "/job/{job_id}"
-)  # stopped the duplicating of the fetch functions, now query at one point
+@app.get("/job/{job_id}", tags=["job"])  # stopped the duplicating of the fetch functions, now query at one point
 async def get_job(job_id: str, fields: str = None):
 
     if job_id not in jobs:
@@ -180,7 +183,7 @@ async def get_job(job_id: str, fields: str = None):
     return job
 
 
-@app.get("/job/{job_id}/results")
+@app.get("/job/{job_id}/results", tags=["jobresults"])
 async def get_job_results(job_id: str):
     if job_id not in jobs:
         raise HTTPException(404, detail=f"Job id: {job_id} not found")
