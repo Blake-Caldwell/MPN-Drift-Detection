@@ -219,14 +219,14 @@ function ResultsContent() {
           <div className="cards-container flex flex-col space-y-4 bg-transparent">
             <div className="flex justify-between">
               <DropdownMenu>
-                <DropdownMenuTrigger>
-                <Button
-                  disabled={!allJobsCompleted || downloadState}
-                  variant="default" 
-                  className="text-xs h-8"
-                  >
-                    Download All
-                </Button>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    disabled={!allJobsCompleted || downloadState}
+                    variant="default" 
+                    className="text-xs h-8"
+                    >
+                      Download All
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Download As</DropdownMenuLabel>
@@ -290,7 +290,7 @@ function ResultsContent() {
                   </CardContent>
                   <CardFooter className="flex justify-between">
                     <DropdownMenu>
-                      <DropdownMenuTrigger>
+                      <DropdownMenuTrigger asChild>
                         <Button 
                         variant="secondary"
                         className="text-s h-8 underline mr-10"
