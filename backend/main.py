@@ -1,9 +1,11 @@
 import sys
-import os
 import uuid
 import time
 import pandas as pd
 from threading import Thread
+from docs.tags import tags_metadata, descr
+
+from multiprocessing import Process, Manager
 
 from fastapi import FastAPI, UploadFile, HTTPException, Query, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,9 +28,17 @@ ORIGINS = backend_config["ALLOWED_ORIGINS"]
 STALE_THRESHOLD_DAYS = backend_config["STALE_THRESHOLD_DAYS"]
 
 # 'globals'
-jobs = {}  # stores progress and results so progress is tracked and can be polled
 
-app = FastAPI()
+manager = Manager()
+jobs = manager.dict() # stores progress and results so progress is tracked and can be polled
+
+app = FastAPI(
+    title="Idoba Drift Detector",
+    summary="Idoba Drift Detector created by The Drifters at Murdoch Uni for ICT302.",
+    version="1",
+    description=descr,
+    openapi_tags=tags_metadata
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -38,24 +48,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/")
 async def index():
     return {"details": "--Drift Detector Backend--"}
 
 
-@app.get("/health")  # required for github action docker build
+@app.get("/health", tags=["Health"])  # required for github action docker build
 async def health_check():
     return {"status": "OK"}
 
 
-@app.get("/test")
-def test():
-    return "Hello from FastAPI"
-
 
 # also a config file should be used to only allow certain file types
-@app.post("/upload_files")
+@app.post("/upload_files", tags=["upload"])
 async def upload_files(
     site_name: str = Query(...), files: list[UploadFile] = File(...)
 ):
@@ -69,7 +74,7 @@ async def upload_files(
     time_stamp = time.time()
 
     jobs[job_id] = {
-        "status": "processing",
+        "status": "Initialising",
         "result": None,
         "config": yaml_config,
         "site_name": site_name,
@@ -91,7 +96,12 @@ async def upload_files(
             # e.g npm_sitename_activity.csv
             activity = file.filename.split('_')[2].split('.')[0]
             
-            jobs[job_id]["activities"].append(activity.capitalize())
+            # workaround of a limitation of a manager dict when dealing with nested dict or lists
+            # as modifications of the nested objects are reflected in the shared memory only local
+            # requiring the copying of the manager to a non manager equivalent
+            temp = jobs[job_id]    
+            temp["activities"].append(activity.capitalize())
+            jobs[job_id] = temp
 
             # find target column given an activity
             target_column = target_list[activity]
@@ -102,44 +112,63 @@ async def upload_files(
             # create an activity given the target column and data frame
             new_activity = {"data_frame": data_frame, "target_column": target_column}
             result[activity] = new_activity
-    jobs[job_id]["result"] = result
+    
+    temp = jobs[job_id]
+    temp["result"] = result
+    jobs[job_id] = temp
 
-    thread = Thread(target=process_job, args=[job_id])
-    # if main thread is closed kill all sub threads
-    thread.daemon = True
-    thread.start()
+    # create a sub process to process the job's data
+    process = Process(target=process_job,args=[job_id])
+    # kill sub process if the main process ends
+    process.daemon = True
+    process.start()
 
     return job_id
 
-
 def process_job(job_id):
     # preprocess the jobs dataframe
-    jobs[job_id]["status"] = "Preprocessing"
-    preprocess(jobs[job_id])
+    temp = jobs[job_id]
+    temp["status"] = "Preprocessing"
+    jobs[job_id] = temp
+
+    job = jobs[job_id]
+    job = preprocess(job)
+    jobs[job_id] = job
 
     # train and run the models on the preprocessed dataframe
-    jobs[job_id]["status"] = "Running Models"
+    temp = jobs[job_id]
+    temp["status"] = "Running Models"
+    jobs[job_id] = temp
+
+    job = jobs[job_id]
     model_runner = ModelRunner()
-    model_runner.run_model(jobs[job_id])
+    job = model_runner.run_model(jobs[job_id])
+    jobs[job_id] = job
 
     # detect drift on the prediction dataframe
-    jobs[job_id]["status"] = "Detecting Drift"
+    temp = jobs[job_id]
+    temp["status"] = "Detecting Drift"
+    jobs[job_id] = temp
+
     drift_detection = DriftDetection()
-    for activity in jobs[job_id]["result"]:
-        df = jobs[job_id]["result"][activity]["pred_data_frame"]
+
+    job = jobs[job_id]
+    for activity in job["result"]:
+        df = job["result"][activity]["pred_data_frame"]
         # detected drift on the LSTM column of the dataframe
         target_column = "LSTM"
-        date_column = jobs[job_id]["config"]["date_column"]
-        jobs[job_id]["result"][activity]["drift"] = drift_detection.detect_drift(
+        date_column = job["config"]["date_column"]
+        job["result"][activity]["drift"] = drift_detection.detect_drift(
             df, target_column, date_column
         )
+    jobs[job_id] = job
 
-    jobs[job_id]["status"] = "Complete"
+    temp = jobs[job_id]
+    temp["status"] = "Complete"
+    jobs[job_id] = temp
 
 
-@app.get(
-    "/job/{job_id}"
-)  # stopped the duplicating of the fetch functions, now query at one point
+@app.get("/job/{job_id}", tags=["job"])  # stopped the duplicating of the fetch functions, now query at one point
 async def get_job(job_id: str, fields: str = None):
 
     if job_id not in jobs:
@@ -154,7 +183,7 @@ async def get_job(job_id: str, fields: str = None):
     return job
 
 
-@app.get("/job/{job_id}/results")
+@app.get("/job/{job_id}/results", tags=["jobresults"])
 async def get_job_results(job_id: str):
     if job_id not in jobs:
         raise HTTPException(404, detail=f"Job id: {job_id} not found")
@@ -184,17 +213,12 @@ async def get_job_results(job_id: str):
             how="left",
         )
 
-        # print(job["result"][activity]["pred_data_frame"])
-        # print(actual_data)
-
         # Include the drift data in the result
         # merged_data["drift"] = drift_data["date"]
         results[activity] = {}
         results[activity]["data"] = merged_data.to_json(index=False)
         results[activity]["target_column"] = target_column
         results[activity]["drift"] = drift_data
-
-    # print(results)
 
     return results
 

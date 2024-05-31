@@ -24,15 +24,4 @@ def preprocess(job):
 
         job['result'][activity]['data_frame'] = df
 
-
-
-#TESTING
-#config_p = Path(r'C:\Users\nicol_l3f7kpx\Documents\config.yaml')
-#csv_p = Path(r'C:\Users\nicol_l3f7kpx\Downloads\MPN_forecasring_backtest\MPN_forecasring_backtest\MPN_forecasring_backtest\bdm1_shiftly_processed')
-#save_p = Path(r'C:\Users\nicol_l3f7kpx\Documents\GitHub\MPN-Drift-Detection\backend\src\preprocessing\temp')
-
-#yaml_config = Config(config_p)
-
-#a_dfs, atc = preprocess(yaml_config, csv_p, save_p)
-#print(a_dfs)
-#print(atc)
+    return job

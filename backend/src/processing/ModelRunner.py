@@ -1,43 +1,7 @@
 import pandas as pd
 import os
-import multiprocessing
 
 from src.processing.LSTM import *
-
-#   Author: Abigail Cummins
-#   Date: 06/05/24
-#
-#   Version: 2
-#   - Addition of multiprocessing when running models
-#
-#   Version: 3
-#   - Modification to handle Job (Dict{"job_id": ,Dict{"status": , "result": , "config": }}structures and config files
-
-# ModelRunner Class
-#
-# Prerequisites: The CSV files would have been loaded into dataframes, preprocessed using the values in the
-#   config file and would be stored a dataframes ready to be put into the LSTM model. The configs necessary
-#   for the running of the model would also be provided or have access to somehow (such as the target value)
-#
-# runModel():
-# 1: Run each activity for all the mines asynchronously (all dataframes that are received) using the LSTM model
-#   - This would use Mehdi's code, specifically the train_models function in Mehdi's notebook
-#   - All dataframes are presumed to have been preprocessed already using preprocessing.py from Mehdi's code
-#   2: Set the date column using pandas to_datetime
-#   3: Run train_models (only runs the LSTM model)
-#       - This will generate pickle files for each model generated after LSTM training
-#       - This pickle file is then used to generate the prediction dataframe
-#       - These pickle files are saved under backend/src/models for saving if a particularly good model is made
-#       - Each time this is run the pickle file will be overridden
-# 4: Return prediction results object after all models have finished
-#   - These results will be in the structure of a dictionary (dict) or a name (string) and the prediction dataframe
-#   - The structure for the name in the dict could be {siteName_activity}
-#   - These results can organised and encapsulated etc. and plotted at the front end
-#
-# TODO:
-#   - Add unit testing
-#   - Finish comments and internal documentation
-#   - Fix the FutureWarning caused by concat on empty dataframes
 
 class ModelRunner:
     def train_model(
@@ -109,8 +73,6 @@ class ModelRunner:
 
         total_pred_df = total_pred_df.reset_index(drop=True)
 
-        print(total_pred_df)
-
         return total_pred_df
 
     def run_model(self, job: dict):
@@ -122,9 +84,6 @@ class ModelRunner:
         for file_name in os.listdir("src/models"):
            if file_name.endswith(".pkl"):
                 os.remove("src/models/"+file_name)
-
-        # set up multiprocessing
-        pool = multiprocessing.Pool(multiprocessing.cpu_count()-1)
 
         config = job["config"]
 
@@ -143,29 +102,18 @@ class ModelRunner:
             target_column = job["result"][activity]["target_column"]
             df[date_column] = pd.to_datetime(df[date_column])
 
-            # train each model asynchronously
-            job["result"][activity]["pred_data_frame"] = pool.apply_async(
-                self.train_model,
-                args=(
-                    df,
-                    target_column,
-                    activity,
-                    site_name,
-                    num_test_prediction,
-                    date_column,
-                    new_dates_prediction,
-                    forecast_length,
-                    freq,
-                    input_chunk_length,
-                ),
-            )
+            # generate model and train the lstm to the model
+            job["result"][activity]["pred_data_frame"] = self.train_model(
+                df,
+                target_column,
+                activity,
+                site_name,
+                num_test_prediction,
+                date_column,
+                new_dates_prediction,
+                forecast_length,
+                freq,
+                input_chunk_length
+            )   
 
-        # finish asynchronous processing
-        pool.close()
-        pool.join()
-
-        # get result from all async objects
-        for activity in job["result"]:
-            job["result"][activity]["pred_data_frame"] = job["result"][activity][
-                "pred_data_frame"
-            ].get()
+        return job
