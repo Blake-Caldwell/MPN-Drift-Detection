@@ -210,7 +210,7 @@ async def get_job_results(job_id: str):
             actual_data,
             pred_data_frame,
             on=date_column,
-            how="left",
+            how="outer",
         )
 
         # Include the drift data in the result
