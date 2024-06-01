@@ -9,6 +9,8 @@ import { ScrollArea } from "./ui/scroll-area";
 
 import { useRouter } from "next/navigation";
 
+import { YamlConfigDialog } from "./yamlConfigCreate";
+
 export const FileUpload = () => {
   const [fileEnter, setFileEnter] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -20,6 +22,8 @@ export const FileUpload = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+
+  const [showYamlConfigDialog, setShowYamlConfigDialog] = useState(false); 
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -99,8 +103,22 @@ export const FileUpload = () => {
     });
   };
 
+  const handleYamlConfigCreate = (file: File) => { // adds the yaml into the list (used by the yamlConfig component)
+    setSelectedFiles((prevFiles) => [...prevFiles, file]);
+    setShowYamlConfigDialog(false);
+  };
+
   const handleSubmitClick = async () => {
-    console.log("Submit!");
+
+    const hasYamlFile = selectedFiles.some((file) =>
+      file.name.endsWith(".yaml")
+    );
+
+    if (!hasYamlFile) {
+      setShowYamlConfigDialog(true);
+      return;
+    }
+
     setIsLoading(true); // shows loading spinner
 
     let site_map = new Map<string, File[]>();
@@ -287,6 +305,12 @@ export const FileUpload = () => {
       {showError && (
         <ErrorPopup items={showError} onClose={() => setShowError(null)} />
       )}
+
+      <YamlConfigDialog
+        open={showYamlConfigDialog}
+        onOpenChange={setShowYamlConfigDialog}
+        onConfigCreate={handleYamlConfigCreate}
+      />
     </div>
   );
 };
