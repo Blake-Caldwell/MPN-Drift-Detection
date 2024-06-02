@@ -74,8 +74,6 @@ export const transformBarData = (dfJSON: any): BarData => {
   while(dfJSON.LSTM[pred_start] === null)
     pred_start++;
 
-  
-
   const actualValues: Array<number> = Object.values(dfJSON.actual);
 
   for (let i = pred_start; i < dataLength; i+=windowSize) {
