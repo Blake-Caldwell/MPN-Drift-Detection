@@ -85,14 +85,24 @@ export const LineChart = ({ data, target, driftData }: LineChartProps) =>  (
         symbolSize: 12,
         symbolShape: "circle",
         symbolBorderColor: "rgba(0, 0, 0, .5)",
-        effects: [
-          {
-            on: "hover",
-            style: {
-              itemBackground: "rgba(0, 0, 0, .03)",
-              itemOpacity: 1,
-            },
-          },
+        data: [
+          ...data.map((item) => ({
+            id: item.id,
+            label: item.id,
+            color: colourScheme[item.id],
+          })),
+          ...(driftData &&
+          Object.values(driftData).some(
+            (drift: any) => drift.status === "Significant"
+          )
+            ? [
+                {
+                  id: "significant-drift",
+                  label: "Drift",
+                  color: "#b0413e",
+                },
+              ]
+            : []),
         ],
       },
     ]}
@@ -102,11 +112,11 @@ export const LineChart = ({ data, target, driftData }: LineChartProps) =>  (
       driftData &&
       Object.entries(driftData)
         .filter(([, drift]: [string, any]) => drift.status === "Significant")
-        .map(([date, drift]: [string, any]) => ({
+        .map(([date, drift]: [string, any], index: number) => ({
           axis: "x",
-          value: new Date(date.split("T")[0]), // Extract the date portion in "YYYY-MM-DD" format
-          lineStyle: { stroke: "#b0413e", strokeWidth: 1.5 },
-          legend: `${date.split("T")[0]}`,
+          value: new Date(date.split("T")[0]), // Keep the date as the value
+          lineStyle: { stroke: "#b0413e", strokeWidth: 1 },
+          legend: `${index + 1}`, // Display the index as the legend
           legendOrientation: "horizontal",
           legendPosition: "top",
           textStyle: {

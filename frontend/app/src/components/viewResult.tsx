@@ -13,6 +13,17 @@ import { Label } from "./ui/label";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+
 function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
   const [result, setResult] = useState<any>(null);
 
@@ -91,7 +102,7 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
             </div>
             <div className="mt-5 flex w-11/12">
               <div
-                className="w-10/12 bg-slate-100 text-slate-900 rounded-lg pb-3 pl-3 mr-3"
+                className="w-7/12 bg-slate-100 text-slate-900 rounded-lg pb-3 pl-3 mr-3"
                 style={{ height: "400px" }}
               >
                 {barData ? (
@@ -103,34 +114,39 @@ function ViewResult({ selectedJobId }: { selectedJobId: string | null }) {
                   <div>Writing Bars...</div>
                 )}
               </div>
-              <div className=" w-2/12 bg-slate-100 text-slate-900 rounded-lg">
+              <div className=" w-5/12 bg-slate-100 text-slate-900 rounded-lg">
                 <ScrollArea className="h-96 rounded-md border">
                   <div className="p-4">
                     <Label className="justify-center text-md mb-2">
                       Identified Drift Occurences
                     </Label>
                     <Separator className="fill-slate-950 bg-slate-950 mb-3 h-0.5"></Separator>
-                    {driftData &&
-                      Object.entries(driftData).map(
-                        ([date, drift]: [string, any]) => (
-                          <React.Fragment key={date}>
-                            <div className="border-solid border-slate-700 border-2 mt-1 mb-1 p-1 border-opacity-10 rounded-md shadow-md">
-                              <div className="text-sm">
-                                <strong>Date:</strong> {date.split("T")[0]}
-                              </div>
-                              <div className="text-sm">
-                                <strong>Status:</strong> {drift.status}
-                              </div>
-                              <div className="text-sm">
-                                <strong>Difference:</strong> {drift.difference}
-                              </div>
-                              <div className="text-sm">
-                                <strong>Z-Score:</strong> {drift.z_score}
-                              </div>
-                            </div>
-                          </React.Fragment>
-                        )
-                      )}
+                    {driftData && (
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead> </TableHead>
+                            <TableHead>Date</TableHead>
+                            {/* <TableHead>Status</TableHead> */}
+                            <TableHead>Difference</TableHead>
+                            <TableHead>Z-Score</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {Object.entries(driftData).map(
+                            ([date, drift]: [string, any], index: number) => (
+                              <TableRow key={date} className=" font-medium text-xs">
+                                <TableCell className="text-center">{index + 1}</TableCell>
+                                <TableCell>{date.split("T")[0]}</TableCell>
+                                {/* <TableCell>{drift.status}</TableCell> */}
+                                <TableCell>{drift.difference}</TableCell>
+                                <TableCell>{drift.z_score}</TableCell>
+                              </TableRow>
+                            )
+                          )}
+                        </TableBody>
+                      </Table>
+                    )}
                   </div>
                 </ScrollArea>
               </div>
