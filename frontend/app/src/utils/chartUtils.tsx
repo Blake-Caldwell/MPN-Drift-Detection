@@ -67,16 +67,15 @@ export type BarData = Array<{
 export const transformBarData = (dfJSON: any): BarData => {
   const bd: BarData = [];
   const windowSize = 12;
-  const dataLength = Object.keys(dfJSON.DATE).length;
+  const actualValues: Array<number> = Object.values(dfJSON.actual);
+  const actualDataLength = actualValues.findLastIndex((value) => value !== null) + 1;
 
   let pred_start = 0;
   
   while(dfJSON.LSTM[pred_start] === null)
     pred_start++;
 
-  const actualValues: Array<number> = Object.values(dfJSON.actual);
-
-  for (let i = pred_start; i < dataLength; i+=windowSize) {
+  for (let i = pred_start + windowSize - 1; i < actualDataLength; i += windowSize) {
     const date = new Date(dfJSON.DATE[i]).toISOString().split('T')[0];
     
     bd.push({
