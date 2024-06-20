@@ -1,7 +1,22 @@
 # MPN Drift Detection Dashboard
 
+![image](https://github.com/Blake-Caldwell/MPN-Drift-Detection/assets/18070483/0ebf4464-f698-423c-95cd-538fe83f6813)
+
+A web-based visual dashboard for running models against data for mine sites, and displaying the results! The purpose of this project is to automate a previously manual process of backtesting models to see if drift was occurring in AI models.
 This project consists of a FastAPI backend and a Next.js frontend. Docker and Docker Compose are used to streamline deployment and create a consistent runtime environment.
 
+
+## Visualisations
+![image](https://github.com/Blake-Caldwell/MPN-Drift-Detection/assets/18070483/0541c2a8-ee01-4a02-b65f-4dd322446512)
+
+### Model to Data Comparison (Line Chart)
+A comparison of day by day estimations of the models are compared against the actual data to show how accurate the models are.
+
+### Rolling Average Aggregates (Bar Chart)
+Aggregations of the activity values display how accurate the model is over blocks of time.
+
+### Detected Occurences of Drift
+Model drift is detected automatically and displayed inside of the data comparison.
 ## Local Hosting
 
 ### Running the Backend
